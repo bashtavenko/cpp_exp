@@ -1,8 +1,6 @@
-# CMake
-cmake-build-debug/
+# Bazel
+bazel-*
+.clwb/
 
 # CLion
 .idea/
-
-# App
-third_party/
