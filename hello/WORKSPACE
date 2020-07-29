@@ -1,6 +1,11 @@
 workspace(name = "cpp_exp")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+load(
+    "@bazel_tools//tools/build_defs/repo:git.bzl",
+    "git_repository",
+)
+
 # abseil-cpp
 http_archive(
   name = "com_google_absl",
@@ -23,4 +28,11 @@ http_archive(
     urls = ["https://github.com/bazelbuild/rules_cc/archive/9e10b8a6db775b1ecd358d8ddd3dab379a2c29a5.zip"],
     strip_prefix = "rules_cc-9e10b8a6db775b1ecd358d8ddd3dab379a2c29a5",
     sha256 = "954b7a3efc8752da957ae193a13b9133da227bdacf5ceb111f2e11264f7e8c95",
+)
+
+# Repro
+git_repository(
+    name = "com_google_differential_privacy",
+    commit = "9923ad4ee1b84a7002085e50345fcc05f2b21bcb",
+    remote = "https://github.com/google/differential-privacy.git",
 )
