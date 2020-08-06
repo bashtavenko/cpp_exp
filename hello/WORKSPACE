@@ -39,3 +39,6 @@ git_repository(
 
 load("@com_google_differential_privacy//:differential_privacy_deps.bzl", "differential_privacy_deps")
 differential_privacy_deps()
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+protobuf_deps()
