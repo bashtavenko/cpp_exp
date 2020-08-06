@@ -6,7 +6,7 @@ cc_library(
     hdrs = ["hello.h"],
     deps = [
         "@com_google_absl//absl/strings",
-        "@com_google_differential_privacy//cc/base:statusor",
+        "@com_google_cc_differential_privacy//base:statusor",
     ],
 )
 
