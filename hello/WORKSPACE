@@ -32,19 +32,7 @@ http_archive(
 
 # Repro
 http_archive(
-    name = "com_google_differential_privacy",
-    urls = ["https://github.com/google/differential-privacy/archive/main.zip"],
-    strip_prefix = "differential-privacy-main",
-) 
-
-http_archive(
     name = "com_google_cc_differential_privacy",
     urls = ["https://github.com/google/differential-privacy/archive/main.zip"],
     strip_prefix = "differential-privacy-main/cc",
 )
-
-load("@com_google_differential_privacy//:differential_privacy_deps.bzl", "differential_privacy_deps")
-differential_privacy_deps()
-
-load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
-protobuf_deps()
