@@ -24,5 +24,6 @@ cc_binary(
     srcs = ["hello_main.cc"],
     deps = [
         ":hello",
+       "@com_github_gflags_gflags//:gflags"
     ],
 )
