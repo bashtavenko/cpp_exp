@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Bazel build",
+      "type": "shell",
+      "command": "bazel build //... -c dbg",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+    }
+  ]
+}
