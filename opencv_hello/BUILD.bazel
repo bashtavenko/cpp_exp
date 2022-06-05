@@ -1,0 +1,13 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+cc_test(
+    name = "mat_test",
+    srcs = ["mat_test.cc"],
+    deps = [
+        "//opencv:opencv_cmake",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
