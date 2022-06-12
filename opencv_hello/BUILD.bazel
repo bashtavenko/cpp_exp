@@ -6,8 +6,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 cc_test(
     name = "mat_test",
     srcs = ["mat_test.cc"],
+    data = glob(["testdata/*"]),
     deps = [
         "//opencv:opencv_cmake",
+        "@bazel_tools//tools/cpp/runfiles",
         "@com_google_googletest//:gtest_main",
     ],
 )
