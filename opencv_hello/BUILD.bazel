@@ -3,12 +3,28 @@ load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_depende
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
+cmake(
+    name = "opencv",
+    cmake_options = [
+        "-DBUILD_LIST=core,highgui,imgcodecs,imgproc",
+    ],
+    lib_source = "@opencv//:all",
+    out_include_dir = "include/opencv4",
+    out_shared_libs = [
+        "libopencv_core.so.4.6.0",
+        "libopencv_highgui.so.4.6.0",
+        "libopencv_imgcodecs.so.4.6.0",
+        "libopencv_imgproc.so.4.6.0",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 cc_test(
     name = "mat_test",
     srcs = ["mat_test.cc"],
-    data = glob(["testdata/*"]),
+    data = glob(["testdata/**"]),
     deps = [
-        "//opencv:opencv_cmake",
+        "//:opencv",
         "@bazel_tools//tools/cpp/runfiles",
         "@com_google_googletest//:gtest_main",
     ],

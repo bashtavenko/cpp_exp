@@ -1,6 +1,5 @@
 #include "include/gtest/gtest.h"
-#include "opencv/opencv_cmake/include/opencv2/core.hpp"
-#include "opencv/opencv_cmake/include/opencv2/imgcodecs.hpp"
+#include "opencv2/opencv.hpp"
 #include "tools/cpp/runfiles/runfiles.h"
 
 namespace opencv_hello {
