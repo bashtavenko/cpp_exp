@@ -48,3 +48,26 @@ http_archive(
         "https://github.com/google/googletest/archive/refs/tags/release-1.12.1.tar.gz",
     ],
 )
+
+http_archive(
+    name = "com_google_absl",
+    sha256 = "91ac87d30cc6d79f9ab974c51874a704de9c2647c40f6932597329a282217ba8",
+    strip_prefix = "abseil-cpp-20220623.1",
+    urls = [
+        "https://github.com/abseil/abseil-cpp/archive/refs/tags/20220623.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "com_github_gflags_gflags",
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
+http_archive(
+    name = "com_github_google_glog",
+    sha256 = "8a83bf982f37bb70825df71a9709fa90ea9f4447fb3c099e1d720a439d88bad6",
+    strip_prefix = "glog-0.6.0",
+    urls = ["https://github.com/google/glog/archive/refs/tags/v0.6.0.tar.gz"],
+)
