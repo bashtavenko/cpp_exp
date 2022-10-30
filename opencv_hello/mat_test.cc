@@ -9,7 +9,7 @@
 #include <glog/logging.h>
 #include <glog/stl_logging.h>
 
-namespace opencv_hello {
+namespace hello {
 namespace {
 using ::bazel::tools::cpp::runfiles::Runfiles;
 using ::std::filesystem::path;

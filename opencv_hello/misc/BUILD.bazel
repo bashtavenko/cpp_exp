@@ -1,0 +1,13 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "misc",
+    srcs = ["misc.cc"],
+    hdrs = ["misc.h"],
+    data = ["//testdata"],
+    deps = [
+        "//:opencv",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+    ],
+)
