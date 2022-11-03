@@ -1,7 +1,6 @@
 #include <filesystem>
 
 #include "misc.h"
-#include "opencv2/opencv.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 
@@ -21,9 +20,16 @@ absl::Status ShowPicture() {
 }
 
 absl::Status ShowVideo() {
-  // TODO: Show videos
-  // cv::VideoCapture cap;
+  cv::namedWindow( "Example 2-3", cv::WINDOW_AUTOSIZE );
+  cv::VideoCapture cap;
+  cap.open(path(kTestDataPath) / "Megamind.avi");
+  cv::Mat frame;
+  for(;;) {
+    cap >> frame;
+    if (frame.empty()) break;
+    cv::imshow("Example 2-3", frame);
+    if ((char) cv::waitKey(/*delay=*/33) >= 0) break;
+  }
   return absl::OkStatus();
 }
-
 } // namespace hello::misc

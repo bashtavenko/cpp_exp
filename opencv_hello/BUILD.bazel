@@ -3,10 +3,12 @@ load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_depende
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
+# "-DWITH_FFMPEG=OFF" is for https://github.com/opencv/opencv/issues/22748
 cmake(
     name = "opencv",
     cmake_options = [
-        "-DBUILD_LIST=core,highgui,imgcodecs,imgproc",
+        "-DBUILD_LIST=core,highgui,imgcodecs,imgproc,videoio",
+        "-DWITH_FFMPEG=OFF",
     ],
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",
@@ -15,6 +17,7 @@ cmake(
         "libopencv_highgui.so.4.6.0",
         "libopencv_imgcodecs.so.4.6.0",
         "libopencv_imgproc.so.4.6.0",
+        "libopencv_videoio.so.4.6.0",
     ],
     visibility = ["//visibility:public"],
 )
