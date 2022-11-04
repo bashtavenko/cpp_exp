@@ -5,11 +5,11 @@
 
 int main(int argc, char** argv) {
 
-    google::InitGoogleLogging(argv[0]);
-    gflags::ParseCommandLineFlags(&argc, &argv, true);
+  google::InitGoogleLogging(argv[0]);
+  gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-    absl::Status status = hello::misc::ShowVideo();
-    LOG(INFO) << status.code();
-    return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
+  absl::Status status = hello::misc::global::ShowVideoWithTaskBar();
+  LOG(INFO) << status.code();
+  return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
