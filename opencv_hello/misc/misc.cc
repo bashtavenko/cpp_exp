@@ -95,5 +95,45 @@ absl::Status ShowVideoWithTaskBar() {
   }
   return absl::OkStatus();
 }
+} // namespace global
+absl::Status ShowPictureBlurring() {
+  cv::Mat img = cv::imread(path(kTestDataPath) / "starry_night.jpg");
+  if (img.empty()) return absl::InternalError("No image");
+  cv::namedWindow("Example 2-5-in", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Example 2-5-out", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Example 2-5-in", img);
+  cv::Mat out;
+  cv::GaussianBlur(img, out, cv::Size(5, 5), 3, 3);
+  cv::GaussianBlur(out, out, cv::Size(5, 5), 3, 3);
+  cv::imshow("Example 2-5-out", out);
+  cv::waitKey(0);
+  return absl::OkStatus();
+}
+absl::Status ShowPicturePyrDown() {
+  cv::Mat img = cv::imread(path(kTestDataPath) / "starry_night.jpg");
+  if (img.empty()) return absl::InternalError("No image");
+  cv::namedWindow("Example 2-6-in", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Example 2-6-out", cv::WINDOW_AUTOSIZE);
+  cv::imshow("Example 2-6-in", img);
+  cv::Mat out;
+  cv::imshow("Example 2-6-in", img);
+  cv::pyrDown(img, out);
+  cv::imshow("Example 2-6-out", out);
+  cv::waitKey(0);
+  return absl::OkStatus();
+}
+absl::Status ShowPictureCanny() {
+  cv::Mat img_rgb = cv::imread(path(kTestDataPath) / "HappyFish.jpg");
+  if (img_rgb.empty()) return absl::InternalError("No image");
+  cv::namedWindow("Example Gray", cv::WINDOW_AUTOSIZE);
+  cv::namedWindow("Example Canny", cv::WINDOW_AUTOSIZE);
+  cv::Mat img_gry;
+  cv::cvtColor(img_rgb, img_gry, cv::COLOR_BGR2GRAY);
+  cv::imshow("Example Gray", img_gry);
+  cv::Mat img_cny;
+  cv::Canny(img_gry, img_cny, 10, 100, 3, true);
+  cv::imshow("Example Canny", img_cny);
+  cv::waitKey(/*delay=*/0);
+  return absl::OkStatus();
 }
 } // namespace hello::misc

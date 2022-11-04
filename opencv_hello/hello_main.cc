@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  absl::Status status = hello::misc::global::ShowVideoWithTaskBar();
+  absl::Status status = hello::misc::ShowPictureCanny();
   LOG(INFO) << status.code();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -12,5 +12,8 @@ absl::Status ShowVideoWithTaskBar();
 
 absl::Status ShowPicture();
 absl::Status ShowVideo();
+absl::Status ShowPictureBlurring();
+absl::Status ShowPicturePyrDown();
+absl::Status ShowPictureCanny();
 } // namespace hello::misc
 #endif //MISC_MISC_H_

@@ -40,15 +40,15 @@ TEST(Mat, Works) {
   Mat mat2 = cv::imread(runfiles->Rlocation(
       path(kTestDataPath) / "pic3.png"));
   ASSERT_THAT(mat2.channels(), Eq(3));
-  // TODO: Getting pixel data doesn't quite work
-  auto pixel = mat2.at<cv::Vec3b>(384, 0);
-  ASSERT_THAT(pixel[0], Eq(77));
-
-  ASSERT_THAT(mat2.channels(), Eq(3));
-  const cv::Mat_<cv::Vec3b> vec3 = mat2;
-  ASSERT_THAT(vec3(384, 0).val[0], Eq(0));
-  ASSERT_THAT(vec3(384, 0)[1], Eq(110));
-  ASSERT_THAT(vec3(384, 0)[2], Eq(116));
+  constexpr int x = 16;
+  constexpr int y = 32;
+  cv::Vec3b intensity = mat2.at<cv::Vec3b>(x, y);
+  const uchar blue = intensity[0];
+  const uchar green = intensity[1];
+  const uchar red = intensity[2];
+  ASSERT_THAT(blue, Eq(255));
+  ASSERT_THAT(green, Eq(255));
+  ASSERT_THAT(red, Eq(255));
 
   // Operations
   Mat a = Mat::eye(Size(3, 2), CV_32F);

@@ -25,7 +25,7 @@ cmake(
 cc_test(
     name = "mat_test",
     srcs = ["mat_test.cc"],
-    data = glob(["testdata/**"]),
+    data = ["//testdata"],
     deps = [
         "//:opencv",
         "@bazel_tools//tools/cpp/runfiles",
