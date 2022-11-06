@@ -136,4 +136,64 @@ absl::Status ShowPictureCanny() {
   cv::waitKey(/*delay=*/0);
   return absl::OkStatus();
 }
+absl::Status ShowVideoCanny() {
+  cv::VideoCapture cap;
+  cap.open(path(kTestDataPath) / "Megamind.avi");
+  double rate = cap.get(cv::CAP_PROP_FPS);
+  cv::Mat MatFrame;
+  cv::Mat MatGray;
+  cv::Mat MatCanny;
+  int delay = 1000 / rate;
+  LOG(INFO) << "rate = " << rate << ", delay = " << delay;
+  while (1) {
+    cap >> MatFrame;
+    if (!MatFrame.data)break;
+    //(1)
+    imshow("Raw Video", MatFrame);
+    //(2)
+    cv::cvtColor(MatFrame, MatGray, cv::COLOR_BGR2GRAY);
+    imshow("Gray Video", MatGray);
+    //(3)
+    Canny(MatGray, MatCanny, 100, 255);
+    imshow("Canny Video", MatCanny);
+    //question a
+    cv::Mat
+        MatAll(MatFrame.rows, 3 * MatFrame.cols, CV_8UC3, cv::Scalar::all(0));
+    cv::cvtColor(MatGray, MatGray, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(MatCanny, MatCanny, cv::COLOR_GRAY2BGR);
+    cv::Mat MatSub = MatAll.colRange(0, MatFrame.cols);
+    MatFrame.copyTo(MatSub);
+    MatSub = MatAll.colRange(MatFrame.cols, 2 * MatFrame.cols);
+    MatGray.copyTo(MatSub);
+    MatSub = MatAll.colRange(2 * MatFrame.cols, 3 * MatFrame.cols);
+    MatCanny.copyTo(MatSub);
+    //question b
+    cv::Scalar color = CV_RGB(255, 0, 0);
+    cv::putText(MatAll,
+                "raw video",
+                cv::Point(50, 30),
+                cv::FONT_HERSHEY_DUPLEX,
+                1.0f,
+                color);
+    putText(MatAll,
+            "gray video",
+            cv::Point(50 + MatFrame.cols, 30),
+            cv::FONT_HERSHEY_DUPLEX,
+            1.0f,
+            color);
+    putText(MatAll,
+            "canny video",
+            cv::Point(50 + 2 * MatFrame.cols, 30),
+            cv::FONT_HERSHEY_DUPLEX,
+            1.0f,
+            color);
+    imshow("all Video", MatAll);
+
+    if ((cv::waitKey(delay) & 255) == 27)
+      break;
+  }
+  cv::waitKey();
+  cap.release();
+  return absl::OkStatus();
+}
 } // namespace hello::misc

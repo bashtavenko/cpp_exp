@@ -15,5 +15,6 @@ absl::Status ShowVideo();
 absl::Status ShowPictureBlurring();
 absl::Status ShowPicturePyrDown();
 absl::Status ShowPictureCanny();
+absl::Status ShowVideoCanny();
 } // namespace hello::misc
 #endif //MISC_MISC_H_

@@ -33,7 +33,7 @@ TEST(Mat, Works) {
   ASSERT_THAT(mat1.cols, Eq(752));
 
   // Create
-  Mat mat(2, 2, CV_8UC1, cv::Scalar(0, 0, 255));
+  Mat mat(3, 10, CV_32FC3, cv::Scalar(1.0f, 0.0f, 1.0f));
   ASSERT_THAT(mat.dims, Eq(2));
 
   // Read again
@@ -51,7 +51,13 @@ TEST(Mat, Works) {
   ASSERT_THAT(red, Eq(255));
 
   // Operations
-  Mat a = Mat::eye(Size(3, 2), CV_32F);
+  Mat a = Mat::eye(Size(3, 2), CV_32FC1);
+  ASSERT_THAT(a.at<float>(0, 0), Eq(1));
+  // Multichannel
+  Mat a1 = Mat::eye(Size(3, 2), CV_32FC2);
+  ASSERT_THAT(a1.at<cv::Vec2f>(0, 0)[0], Eq(1));
+  ASSERT_THAT(a1.at<cv::Vec2f>(0, 0)[1], Eq(0));
+
   Mat b = Mat::ones(Size(3, 2), CV_32F);
   Mat c = a + b;
 }
