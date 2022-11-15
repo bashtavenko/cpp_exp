@@ -1,8 +1,6 @@
 #ifndef MISC_MISC_H_
 #define MISC_MISC_H_
 
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
 #include "absl/status/status.h"
 
 namespace hello::misc {

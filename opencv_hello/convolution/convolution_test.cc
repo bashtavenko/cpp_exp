@@ -1,15 +1,15 @@
 #include "include/gtest/gtest.h"
 #include "include/gmock/gmock-matchers.h"
-#include "absl/strings/string_view.h"
-#include <glog/logging.h>
 #include <glog/stl_logging.h>
+#include <glog/logging.h>
+#include "absl/strings/str_format.h"
 
 namespace hello::convolution {
 
 using ::testing::TestWithParam;
-using testing::ElementsAreArray;
-using testing::ValuesIn;
-using testing::TestParamInfo;
+using ::testing::ElementsAreArray;
+using ::testing::ValuesIn;
+using ::testing::TestParamInfo;
 
 std::vector<int> Convolve1D(std::vector<int> input,
                             std::vector<int> kernel) {
@@ -23,6 +23,8 @@ std::vector<int> Convolve1D(std::vector<int> input,
     for (size_t k = 0; k < length; ++k) {
       if (0 <= n - k && n - k < input.size()) {
         y[n] += input[k] * kernel[n - k];
+        LOG(INFO)
+            << absl::StreamFormat("y[%d] = %d, n = %d, k = %d", n, y[n], n, k);
       }
     }
   }

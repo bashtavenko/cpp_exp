@@ -39,7 +39,9 @@ cc_binary(
     name = "hello_main",
     srcs = ["hello_main.cc"],
     deps = [
+        "//convolution:filters",
         "//misc",
+        "//transformations",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",
         "@com_google_absl//absl/strings",
