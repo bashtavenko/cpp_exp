@@ -40,6 +40,8 @@ cc_binary(
     srcs = ["hello_main.cc"],
     deps = [
         "//convolution:filters",
+        "//fft",
+        "//histograms",
         "//misc",
         "//transformations",
         "@com_github_gflags_gflags//:gflags",
