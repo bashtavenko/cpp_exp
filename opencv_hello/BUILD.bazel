@@ -7,13 +7,15 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 cmake(
     name = "opencv",
     cmake_options = [
-        "-DBUILD_LIST=core,highgui,imgcodecs,imgproc,videoio",
+        "-DBUILD_LIST=calib3d,core,features2d,highgui,imgcodecs,imgproc,videoio",
         "-DWITH_FFMPEG=OFF",
     ],
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",
     out_shared_libs = [
+        "libopencv_calib3d.so.4.6.0",
         "libopencv_core.so.4.6.0",
+        "libopencv_features2d.so.4.6.0",
         "libopencv_highgui.so.4.6.0",
         "libopencv_imgcodecs.so.4.6.0",
         "libopencv_imgproc.so.4.6.0",
@@ -42,6 +44,7 @@ cc_binary(
         "//convolution:filters",
         "//fft",
         "//histograms",
+        "//keypoints",
         "//misc",
         "//transformations",
         "@com_github_gflags_gflags//:gflags",

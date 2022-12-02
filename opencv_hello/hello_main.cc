@@ -6,6 +6,7 @@
 #include <glog/logging.h>
 #include "absl/status/status.h"
 #include "fft/fft.h"
+#include "keypoints/keypoints.h"
 
 int main(int argc, char** argv) {
 
@@ -16,8 +17,13 @@ int main(int argc, char** argv) {
 //  absl::Status status = hello::convolution::AdaptiveThreshold();
 //  absl::Status status = hello::transformations::PerspectiveTransform();
 //  absl::Status status = hello::fft::FastConv();
-  absl::Status status = hello::histograms::Match();
-  LOG(INFO) << status.code();
+//  absl::Status status = hello::histograms::Match();
+  absl::Status
+      status = hello::keypoints::Run(hello::keypoints::DescriptorType::kSift,
+                                     hello::keypoints::MatchAlgorithm::kBf,
+                                     "box.png",
+                                     "box_in_scene.png");
+  LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
