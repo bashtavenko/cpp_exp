@@ -6,8 +6,6 @@
 #include "opencv2/opencv.hpp"
 #include "tools/cpp/runfiles/runfiles.h"
 #include "absl/strings/string_view.h"
-#include <glog/logging.h>
-#include <glog/stl_logging.h>
 
 namespace hello {
 namespace {

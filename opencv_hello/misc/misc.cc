@@ -88,7 +88,7 @@ absl::Status ShowVideoWithTaskBar() {
 
     if (c == 'r') { // run mode
       run = -1;
-      LOG(INFO) << "Run mode, run = " << run;
+      LOG(INFO) << "RunCalibration mode, run = " << run;
     }
 
     if (c == 27) break;

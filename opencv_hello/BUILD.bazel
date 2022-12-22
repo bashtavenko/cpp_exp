@@ -41,6 +41,7 @@ cc_binary(
     name = "hello_main",
     srcs = ["hello_main.cc"],
     deps = [
+        "//calibration",
         "//convolution:filters",
         "//fft",
         "//histograms",
