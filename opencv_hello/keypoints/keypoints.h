@@ -25,8 +25,8 @@ absl::Status Run(DescriptorType descriptor_type,
                  absl::string_view image_file_name,
                  absl::string_view scene_file_name);
 
-// TODO: CLion hosed with includes
-absl::Status RunCalibration();
+// TODO: CLion hosed with includes on command completion and syntax highlighting
+absl::Status RunBirdsEye();
 
 } // namespace hello::keypoints
 #endif //KEYPOINTS_KEYPOINTS_H_

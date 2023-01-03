@@ -7,7 +7,8 @@
 #include "absl/status/status.h"
 #include "fft/fft.h"
 #include "keypoints/keypoints.h"
-#include "calibration/calibration.h"
+#include "calibration/intrinsic.h"
+#include "calibration/birdeye.h"
 
 int main(int argc, char** argv) {
 
@@ -20,11 +21,12 @@ int main(int argc, char** argv) {
 //  absl::Status status = hello::fft::FastConv();
 //  absl::Status status = hello::histograms::Match();
 //  absl::Status
-//      status = hello::keypoints::RunCalibration(hello::keypoints::DescriptorType::kSift,
+//      status = hello::keypoints::RunInstrinsicCalibration(hello::keypoints::DescriptorType::kSift,
 //                                     hello::keypoints::MatchAlgorithm::kBf,
 //                                     "box.png",
 //                                     "box_in_scene.png");
-  absl::Status status = hello::keypoints::RunCalibration();
+//  absl::Status status = hello::keypoints::RunInstrinsicCalibration();
+  absl::Status status = hello::calibration::RunBirdEye();
   LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
