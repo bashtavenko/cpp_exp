@@ -9,6 +9,7 @@
 #include "keypoints/keypoints.h"
 #include "calibration/intrinsic.h"
 #include "calibration/birdeye.h"
+#include "ml/ml.h"
 
 int main(int argc, char** argv) {
 
@@ -26,7 +27,9 @@ int main(int argc, char** argv) {
 //                                     "box.png",
 //                                     "box_in_scene.png");
 //  absl::Status status = hello::keypoints::RunInstrinsicCalibration();
-  absl::Status status = hello::calibration::RunBirdEye();
+//  absl::Status status = hello::calibration::RunBirdEye();
+//  absl::Status status = hello::ml::RunKMeans();
+  absl::Status status = hello::ml::RunDecisionTrees();
   LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

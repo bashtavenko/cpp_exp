@@ -1,0 +1,25 @@
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "kmeans",
+    srcs = ["kmeans.cc"],
+    hdrs = ["ml.h"],
+    deps = [
+        "//:opencv",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_library(
+    name = "decision_trees",
+    srcs = ["decision_trees.cc"],
+    hdrs = ["ml.h"],
+    deps = [
+        "//:opencv",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/status",
+        "@com_google_absl//absl/strings",
+    ],
+)
