@@ -26,10 +26,10 @@ int main(int argc, char** argv) {
 //                                     hello::keypoints::MatchAlgorithm::kBf,
 //                                     "box.png",
 //                                     "box_in_scene.png");
-//  absl::Status status = hello::keypoints::RunInstrinsicCalibration();
+  absl::Status status = hello::calibration::RunInstrinsicCalibration();
 //  absl::Status status = hello::calibration::RunBirdEye();
 //  absl::Status status = hello::ml::RunKMeans();
-  absl::Status status = hello::ml::RunDecisionTrees();
+//  absl::Status status = hello::ml::RunDecisionTrees();
   LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

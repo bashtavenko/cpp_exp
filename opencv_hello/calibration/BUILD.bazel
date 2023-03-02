@@ -27,3 +27,24 @@ cc_library(
         "@com_google_absl//absl/strings",
     ],
 )
+
+cc_library(
+    name = "calibration",
+    srcs = ["calibration.cc"],
+    hdrs = ["calibration.h"],
+    deps = [
+        "//:opencv",
+        "@com_github_google_glog//:glog",
+    ],
+)
+
+cc_test(
+    name = "calibration_test",
+    srcs = ["calibration_test.cc"],
+    deps = [
+        ":calibration",
+        "@com_github_google_glog//:glog",
+        "@com_google_absl//absl/strings",
+        "@com_google_googletest//:gtest_main",
+    ],
+)
