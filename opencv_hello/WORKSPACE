@@ -35,9 +35,9 @@ filegroup(
 http_archive(
     name = "opencv",
     build_file_content = all_content,
-    sha256 = "1ec1cba65f9f20fe5a41fda1586e01c70ea0c9a6d7b67c9e13edf0cfe2239277",
-    strip_prefix = "opencv-4.6.0",
-    urls = ["https://github.com/opencv/opencv/archive/refs/tags/4.6.0.tar.gz"],
+    sha256 = "cbf47ecc336d2bff36b0dcd7d6c179a9bb59e805136af6b9670ca944aef889bd",
+    strip_prefix = "opencv-4.8.0",
+    urls = ["https://github.com/opencv/opencv/archive/refs/tags/4.8.0.tar.gz"],
 )
 
 http_archive(
