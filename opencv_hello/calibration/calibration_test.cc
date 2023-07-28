@@ -36,14 +36,20 @@ TEST(Calibration, Works) {
   //  y
   // Clock-wise from the origin
   // Image points per view - projection of calibration points in pixels
-  std::vector<cv::Point2f> image_points_view = {
-      cv::Point2f(119., 78.), cv::Point2f(303., 101.), cv::Point2f(301., 328.),
-      cv::Point2f(112., 338.)};
+  std::vector<cv::Point2f>
+      image_points_view = {cv::Point2i(100, 61), cv::Point2i(315, 90),
+                           cv::Point2i(309, 369), cv::Point2i(90, 390),
+                           cv::Point2i(133, 95), cv::Point2i(286, 114),
+                           cv::Point2i(283, 341), cv::Point2i(127, 351),
+                           cv::Point2i(165, 131), cv::Point2i(196, 163)};
 
   // object_points per view in 3D coordinates in millimeters
   std::vector<cv::Point3f> object_points_view = {
-      cv::Point3f(0., 0., 0.), cv::Point3f(150., 0., 0.),
-      cv::Point3f(150., 200., 0.), cv::Point3f(0., 200., 0.)};
+      cv::Point3f(0., 0., 0.), cv::Point3f(175., 0., 0.),
+      cv::Point3f(175., 250., 0.), cv::Point3f(0., 250., 0.),
+      cv::Point3f(25., 25., 0.), cv::Point3f(150., 25., 0.),
+      cv::Point3f(150., 225., 0.), cv::Point3f(25., 225., 0.),
+      cv::Point3f(50., 50., 0.), cv::Point3f(75., 75., 0.)};
 
   // We only need one view
   std::vector<std::vector<cv::Point2f>> image_points;
@@ -63,7 +69,7 @@ TEST(Calibration, Works) {
       distortion_coeffs, cv::noArray(), cv::noArray(),
       cv::CALIB_ZERO_TANGENT_DIST | cv::CALIB_FIX_PRINCIPAL_POINT);
 
-  LOG(INFO) << "*** DONE! Reprojection error" << err;
+  LOG(INFO) << "*** DONE! Reprojection error: " << err;
   LOG(INFO) << "intrinsic_matrix: " << intrinsic_matrix;
   LOG(INFO) << "distortion_coeffs: " << distortion_coeffs;
 
@@ -80,12 +86,13 @@ TEST(Calibration, Works) {
   cv::Mat homography = MakeHomographyMatrix(rvec, tvec);
   LOG(INFO) << "homography:" << homography;
 
-  // (215, 212) in pixels should be (75, 100) mm.
-  cv::Mat uv({3, 1}, {215., 212., 1.});
+  // First point should be close to {0, 0, 1} but because we don't un-distort
+  // it is off.
+  cv::Mat uv({3, 1}, {101., 61., 1.});
   cv::Mat object_point =
       NormalizeCoordinate(PixelToPoint(uv, intrinsic_matrix, homography));
   LOG(INFO) << "P: " << object_point;
-  cv::Mat want_object_point({3, 1}, {75., 101., 1.});
+  cv::Mat want_object_point({3, 1}, {5., 3., 1.});
   EXPECT_THAT(kAbsError, CompareMat(object_point, want_object_point));
 }
 
