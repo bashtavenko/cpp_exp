@@ -2,15 +2,33 @@
 #include "include/gtest/gtest.h"
 #include "include/gmock/gmock-matchers.h"
 #include "glog/logging.h"
+#include "calibration_conversions.h"
 
 namespace hello::calibration {
-
+namespace {
 constexpr double kAbsError = 1.0;
 
 MATCHER_P2(CompareMat, a, b, "") {
   cv::Mat difference;
   cv::absdiff(a, b, difference);
   return cv::sum(difference).val[0] <= arg;
+}
+
+std::vector<cv::Point2i> SetImagePoints() {
+  return std::vector<cv::Point2i>{cv::Point2i(100, 61), cv::Point2i(315, 90),
+                                  cv::Point2i(309, 369), cv::Point2i(90, 390),
+                                  cv::Point2i(133, 95), cv::Point2i(286, 114),
+                                  cv::Point2i(283, 341), cv::Point2i(127, 351),
+                                  cv::Point2i(165, 131), cv::Point2i(196, 163)};
+}
+
+std::vector<cv::Point3f> SetObjectPoints() {
+  return std::vector<cv::Point3f>{
+      cv::Point3f(0., 0., 0.), cv::Point3f(175., 0., 0.),
+      cv::Point3f(175., 250., 0.), cv::Point3f(0., 250., 0.),
+      cv::Point3f(25., 25., 0.), cv::Point3f(150., 25., 0.),
+      cv::Point3f(150., 225., 0.), cv::Point3f(25., 225., 0.),
+      cv::Point3f(50., 50., 0.), cv::Point3f(75., 75., 0.)};
 }
 
 TEST(Calibration, PixelToPointWorks) {
@@ -96,4 +114,11 @@ TEST(Calibration, Works) {
   EXPECT_THAT(kAbsError, CompareMat(object_point, want_object_point));
 }
 
+TEST(Calibration, CalibrateWorksToProto) {
+  absl::StatusOr<CalibrationConfig> result =
+      Calibrate(cv::Size(640, 480), SetImagePoints(), SetObjectPoints());
+  EXPECT_TRUE(result.status().ok());
+  LOG(INFO) << result.value().DebugString();
+}
+} // namespace
 } // hello::calibration

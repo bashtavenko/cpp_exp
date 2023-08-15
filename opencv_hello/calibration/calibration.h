@@ -3,6 +3,9 @@
 
 #include <opencv2/calib3d.hpp>
 #include <opencv2/core/utility.hpp>
+#include "calibration/calibration_config.pb.h"
+#include "calibration/calibration_data.pb.h"
+#include "absl/status/statusor.h"
 
 namespace hello::calibration {
 
@@ -20,6 +23,13 @@ cv::Mat PixelToPoint(const cv::Mat& pixel, const cv::Mat& camera_matrix,
 
 // Normalize homogeneous coordinates.
 cv::Mat NormalizeCoordinate(const cv::Mat& x);
+
+// Calibrates image points that correspond to object points given image size.
+// Image and object points should have the same size and no fewer than four
+// otherwise StatusCode::kInvalidArgument returns.
+absl::StatusOr<CalibrationConfig> Calibrate(
+    cv::Size image_size, const std::vector<cv::Point2i>& image_points,
+    const std::vector<cv::Point3f>& object_points);
 
 } // namespace hello::calibration
 #endif //CALIBRATION_CALIBRATION_H_
