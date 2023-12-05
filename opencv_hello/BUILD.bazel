@@ -12,7 +12,7 @@ buildifier(
 cmake(
     name = "opencv",
     cmake_options = [
-        "-DBUILD_LIST=calib3d,core,features2d,highgui,imgcodecs,imgproc,videoio,ml",
+        "-DBUILD_LIST=calib3d,core,features2d,highgui,imgcodecs,imgproc,video,videoio,ml",
         "-DWITH_FFMPEG=OFF",
     ],
     lib_source = "@opencv//:all",
@@ -26,6 +26,7 @@ cmake(
         "libopencv_highgui.so.408",
         "libopencv_imgcodecs.so.408",
         "libopencv_imgproc.so.408",
+        "libopencv_video.so.408",
         "libopencv_videoio.so.408",
     ],
     visibility = ["//visibility:public"],
@@ -47,6 +48,9 @@ cc_test(
 cc_binary(
     name = "hello_main",
     srcs = ["hello_main.cc"],
+    data = [
+        "//testdata",
+    ],
     deps = [
         "//calibration:birdeye",
         "//calibration:intrinsic",
@@ -57,6 +61,7 @@ cc_binary(
         "//misc",
         "//ml:decision_trees",
         "//ml:kmeans",
+        "//tracking",
         "//transformations",
         "@com_github_gflags_gflags//:gflags",
         "@com_github_google_glog//:glog",

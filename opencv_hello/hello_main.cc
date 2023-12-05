@@ -10,6 +10,7 @@
 #include "calibration/intrinsic.h"
 #include "calibration/birdeye.h"
 #include "ml/ml.h"
+#include "tracking/tracking.h"
 
 int main(int argc, char** argv) {
 
@@ -26,10 +27,14 @@ int main(int argc, char** argv) {
 //                                     hello::keypoints::MatchAlgorithm::kBf,
 //                                     "box.png",
 //                                     "box_in_scene.png");
-  absl::Status status = hello::calibration::RunInstrinsicCalibration();
+//  absl::Status status = hello::calibration::RunInstrinsicCalibration();
 //  absl::Status status = hello::calibration::RunBirdEye();
 //  absl::Status status = hello::ml::RunKMeans();
 //  absl::Status status = hello::ml::RunDecisionTrees();
+  absl::Status status = hello::tracking::Farneback("test.avi");
+//  absl::Status status = hello::tracking::Kalman("video.mp4");
+//  absl::Status status = hello::tracking::Kalman("test.avi");
+//  absl::Status status = hello::kalman::Track("test.avi");
   LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }
