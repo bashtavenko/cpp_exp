@@ -5,8 +5,8 @@ cc_library(
     srcs = ["hello.cc"],
     hdrs = ["hello.h"],
     deps = [
-        "@com_google_absl//absl/strings",
-        "@com_github_google_glog//:glog"
+        "@absl//absl/strings",
+        "@glog//:glog"
     ],
 )
 
@@ -15,7 +15,7 @@ cc_test(
     srcs = ["hello_test.cc"],
     deps = [
         ":hello",
-        "@com_google_googletest//:gtest_main",
+        "@googletest//:gtest_main"
     ],
 )
 
@@ -24,6 +24,6 @@ cc_binary(
     srcs = ["hello_main.cc"],
     deps = [
         ":hello",
-       "@com_github_gflags_gflags//:gflags"
+       "@gflags//:gflags"
     ],
 )
