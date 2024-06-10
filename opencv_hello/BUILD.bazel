@@ -14,6 +14,7 @@ cmake(
     cmake_options = [
         "-DBUILD_LIST=calib3d,core,features2d,highgui,imgcodecs,imgproc,video,videoio,ml",
         "-DWITH_FFMPEG=OFF",
+        "-DWITH_GTK=ON",     # Add this line to enable GTK support
     ],
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",

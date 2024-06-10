@@ -17,6 +17,8 @@ int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
+  absl::Status status = hello::misc::ShowPicture();
+
 //  absl::Status status = hello::misc::ShowVideoCanny();
 //  absl::Status status = hello::convolution::AdaptiveThreshold();
 //  absl::Status status = hello::transformations::PerspectiveTransform();
@@ -31,7 +33,7 @@ int main(int argc, char** argv) {
 //  absl::Status status = hello::calibration::RunBirdEye();
 //  absl::Status status = hello::ml::RunKMeans();
 //  absl::Status status = hello::ml::RunDecisionTrees();
-  absl::Status status = hello::tracking::Farneback("test.avi");
+//  absl::Status status = hello::tracking::Farneback("test.avi");
 //  absl::Status status = hello::tracking::Kalman("video.mp4");
 //  absl::Status status = hello::tracking::Kalman("test.avi");
 //  absl::Status status = hello::kalman::Track("test.avi");
