@@ -1,21 +1,26 @@
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
-load("@rules_foreign_cc//foreign_cc:repositories.bzl", "rules_foreign_cc_dependencies")
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_test")
 load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
-load("@com_github_bazelbuild_buildtools//buildifier:def.bzl", "buildifier")
 
+# bazel run //:buildifier
+# .. or warn
 buildifier(
     name = "buildifier",
+    exclude_patterns = [
+        "./bazel-*/*",
+        "./.git/*",
+    ],
+    lint_mode = "fix",
 )
 
 # "-DWITH_FFMPEG=OFF" is for https://github.com/opencv/opencv/issues/22748
 cmake(
     name = "opencv",
-    cmake_options = [
-        "-DBUILD_LIST=calib3d,core,features2d,highgui,imgcodecs,imgproc,video,videoio,ml",
-        "-DWITH_FFMPEG=OFF",
-        "-DWITH_GTK=ON",     # Add this line to enable GTK support
-    ],
+    cache_entries = {
+        "BUILD_LIST": "calib3d,core,features2d,highgui,imgcodecs,imgproc,video,videoio,ml",
+        "WITH_FFMPEG": "OFF",
+        "WITH_GTK": "ON",  # Add this line to enable GTK support
+    },
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",
     out_shared_libs = [
@@ -39,10 +44,10 @@ cc_test(
     data = ["//testdata"],
     deps = [
         "//:opencv",
+        "@absl//absl/strings",
         "@bazel_tools//tools/cpp/runfiles",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings",
-        "@com_google_googletest//:gtest_main",
+        "@glog",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -64,8 +69,8 @@ cc_binary(
         "//ml:kmeans",
         "//tracking",
         "//transformations",
-        "@com_github_gflags_gflags//:gflags",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/strings",
+        "@gflags",
+        "@glog",
     ],
 )

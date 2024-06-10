@@ -7,9 +7,9 @@ cc_library(
     deps = [
         "//:opencv",
         "//util",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/algorithm:container",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/algorithm:container",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )

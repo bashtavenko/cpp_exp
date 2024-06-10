@@ -1,7 +1,7 @@
-package(default_visibility = ["//visibility:public"])
-
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
+
+package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "intrinsic",
@@ -10,10 +10,10 @@ cc_library(
     deps = [
         "//:opencv",
         "//util",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/algorithm:container",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/algorithm:container",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )
 
@@ -24,10 +24,10 @@ cc_library(
     deps = [
         "//:opencv",
         "//util",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/algorithm:container",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/algorithm:container",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )
 
@@ -40,10 +40,10 @@ cc_library(
         ":util",
         "//:opencv",
         "//util",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status:statusor",
-        "@com_google_absl//absl/strings",
-        "@com_google_protobuf//:protobuf",
+        "@absl//absl/status:statusor",
+        "@absl//absl/strings",
+        "@glog",
+        "@protobuf",
     ],
 )
 
@@ -52,10 +52,10 @@ cc_test(
     srcs = ["calibration_test.cc"],
     deps = [
         ":calibration",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
-        "@com_google_googletest//:gtest_main",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -81,6 +81,6 @@ cc_library(
     deps = [
         ":calibration_cc_proto",
         "//:opencv",
-        "@com_google_absl//absl/status:statusor",
+        "@absl//absl/status:statusor",
     ],
 )

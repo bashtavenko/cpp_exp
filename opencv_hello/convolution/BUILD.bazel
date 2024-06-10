@@ -4,10 +4,10 @@ cc_test(
     name = "convolution_test",
     srcs = ["convolution_test.cc"],
     deps = [
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",  # status is required for strings?
-        "@com_google_absl//absl/strings",
-        "@com_google_googletest//:gtest_main",
+        "@absl//absl/status",  # status is required for strings?
+        "@absl//absl/strings",
+        "@glog",
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -17,8 +17,8 @@ cc_library(
     hdrs = ["filters.h"],
     deps = [
         "//:opencv",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )

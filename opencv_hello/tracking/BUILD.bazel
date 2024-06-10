@@ -2,14 +2,15 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "tracking",
-    srcs = ["farneback.cc",
-            "kalman.cc"
-            ],
+    srcs = [
+        "farneback.cc",
+        "kalman.cc",
+    ],
     hdrs = ["tracking.h"],
     deps = [
         "//:opencv",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )

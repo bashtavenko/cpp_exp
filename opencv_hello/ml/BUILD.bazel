@@ -6,9 +6,9 @@ cc_library(
     hdrs = ["ml.h"],
     deps = [
         "//:opencv",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )
 
@@ -18,8 +18,8 @@ cc_library(
     hdrs = ["ml.h"],
     deps = [
         "//:opencv",
-        "@com_github_google_glog//:glog",
-        "@com_google_absl//absl/status",
-        "@com_google_absl//absl/strings",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@glog",
     ],
 )
