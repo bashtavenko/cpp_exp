@@ -1,10 +1,9 @@
 #include "birdeye.h"
-
+#include <iostream>
 #include <filesystem>
 #include "glog/logging.h"
 #include "absl/strings/str_format.h"
 #include "absl/strings/str_cat.h"
-#include "absl/algorithm/container.h"
 
 
 #include "opencv2/highgui/highgui.hpp"
@@ -14,7 +13,7 @@
 
 namespace hello::calibration {
 
-using ::std::filesystem::path;
+using std::filesystem::path;
 
 absl::Status RunBirdEye() {
   constexpr absl::string_view

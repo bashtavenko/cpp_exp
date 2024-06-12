@@ -1,6 +1,5 @@
 #include "include/gtest/gtest.h"
 #include "include/gmock/gmock-matchers.h"
-#include <glog/stl_logging.h>
 #include <glog/logging.h>
 #include "absl/strings/str_format.h"
 
@@ -46,7 +45,7 @@ TEST_P(ConvolutionTest, Convolves) {
               ElementsAreArray(test_case.expected));
 }
 
-INSTANTIATE_TEST_CASE_P
+INSTANTIATE_TEST_SUITE_P
 (ConvolutionTests,
  ConvolutionTest,
  ValuesIn<TestCase>({{

@@ -9,6 +9,6 @@ absl::Status Compute();
 absl::Status Compare();
 absl::Status Match();
 
-} // namespace hello::histograms
+}  // namespace hello::histograms
 
-#endif //HISTOGRAMS_HISTOGRAMS_H_
+#endif  // HISTOGRAMS_HISTOGRAMS_H_

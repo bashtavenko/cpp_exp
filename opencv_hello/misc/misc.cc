@@ -4,7 +4,6 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 #include <glog/logging.h>
-#include <glog/stl_logging.h>
 #include "absl/strings/str_format.h"
 
 namespace hello::misc {
@@ -37,12 +36,14 @@ absl::Status ShowVideo() {
 }
 
 namespace global {
+using ::std::filesystem::path;
+
 int run;
 int dont_set;
 int current_pos;
 cv::VideoCapture cap;
 
-void OnTrackbarSlide(int, void*) {
+void OnTrackbarSlide(int, void *) {
   cap.set(cv::CAP_PROP_POS_FRAMES, current_pos);
   if (!dont_set) run = 1;
   dont_set = 0;

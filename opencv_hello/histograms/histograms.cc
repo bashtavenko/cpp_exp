@@ -1,8 +1,7 @@
 #include "histograms.h"
-#include <filesystem>
 #include <glog/logging.h>
+#include <filesystem>
 #include "absl/strings/str_format.h"
-
 #include "opencv2/opencv.hpp"
 
 namespace hello::histograms {
@@ -19,9 +18,9 @@ absl::Status Compute() {
   cv::Mat hsv;
   cv::cvtColor(src, hsv, cv::COLOR_BGR2HSV);
 
-  float h_ranges[] = {0, 180}; // hue is [0, 180]
+  float h_ranges[] = {0, 180};  // hue is [0, 180]
   float s_ranges[] = {0, 256};
-  const float* ranges[] = {h_ranges, s_ranges};
+  float const* ranges[] = {h_ranges, s_ranges};
   int histSize[] = {30, 32}, ch[] = {0, 1};
 
   cv::Mat hist;
@@ -39,12 +38,8 @@ absl::Status Compute() {
   for (int h = 0; h < histSize[0]; h++) {
     for (int s = 0; s < histSize[1]; s++) {
       float hval = hist.at<float>(h, s);
-      cv::rectangle(
-          hist_img,
-          cv::Rect(h * scale, s * scale, scale, scale),
-          cv::Scalar::all(hval),
-          -1
-      );
+      cv::rectangle(hist_img, cv::Rect(h * scale, s * scale, scale, scale),
+                    cv::Scalar::all(hval), -1);
     }
   }
 
@@ -57,9 +52,7 @@ absl::Status Compute() {
 
 absl::Status Compare() {
   constexpr absl::string_view kImages[] = {
-      "HandIndoorColor.jpg",
-      "HandOutdoorColor.jpg",
-      "HandOutdoorSunColor.jpg",
+      "HandIndoorColor.jpg", "HandOutdoorColor.jpg", "HandOutdoorSunColor.jpg",
       "fruits.jpg"};
 
   std::vector<cv::Mat> src(5);
@@ -109,21 +102,14 @@ absl::Status Compare() {
   int h_bins = 8;
   int s_bins = 8;
   int hist_size[] = {h_bins, s_bins}, ch[] = {0, 1};
-  float h_ranges[] = {0, 180}; // hue range is [0,180]
+  float h_ranges[] = {0, 180};  // hue range is [0,180]
   float s_ranges[] = {0, 255};
-  const float* ranges[] = {h_ranges, s_ranges};
+  float const* ranges[] = {h_ranges, s_ranges};
   int scale = 10;
 
   for (i = 0; i < 5; ++i) {
     cv::cvtColor(src[i], hsv[i], cv::COLOR_BGR2HSV);
-    cv::calcHist(&hsv[i],
-                 1,
-                 ch,
-                 cv::noArray(),
-                 hist[i],
-                 2,
-                 hist_size,
-                 ranges,
+    cv::calcHist(&hsv[i], 1, ch, cv::noArray(), hist[i], 2, hist_size, ranges,
                  true);
     cv::normalize(hist[i], hist[i], 0, 255, cv::NORM_MINMAX);
     hist_img[i] =
@@ -134,12 +120,8 @@ absl::Status Compare() {
     for (int h = 0; h < hist_size[0]; h++)
       for (int s = 0; s < hist_size[1]; s++) {
         float hval = hist[i].at<float>(h, s);
-        cv::rectangle(
-            hist_img[i],
-            cv::Rect(h * scale, s * scale, scale, scale),
-            cv::Scalar::all(hval),
-            -1
-        );
+        cv::rectangle(hist_img[i], cv::Rect(h * scale, s * scale, scale, scale),
+                      cv::Scalar::all(hval), -1);
       }
   }
 
@@ -170,15 +152,14 @@ absl::Status Compare() {
   cv::namedWindow("HS Histogram4", 1);
   cv::imshow("HS Histogram4", hist_img[4]);
 
-  for (i = 1; i < 5; ++i) { // For each histogram
+  for (i = 1; i < 5; ++i) {  // For each histogram
     LOG(INFO) << absl::StreamFormat("Hist[0] vs Hist[%i]", i);
-    for (int j = 0; j < 4; ++j) { // For each comparison type
-      LOG(INFO) << absl::StreamFormat("method[%i]: %f",
-                                      j,
+    for (int j = 0; j < 4; ++j) {  // For each comparison type
+      LOG(INFO) << absl::StreamFormat("method[%i]: %f", j,
                                       cv::compareHist(hist[0], hist[i], j));
     }
   }
-  //Do EMD and report
+  // Do EMD and report
   //
   std::vector<cv::Mat> sig(5);
 
@@ -194,7 +175,7 @@ absl::Status Compare() {
       for (int s = 0; s < s_bins; s++) {
         float bin_val = hist[i].at<float>(h, s);
         if (bin_val != 0)
-          sigv.push_back(cv::Vec3f(bin_val, (float) h, (float) s));
+          sigv.push_back(cv::Vec3f(bin_val, (float)h, (float)s));
       }
 
     // make Nx3 32fC1 matrix, where N is the number of nonzero histogram bins
@@ -211,9 +192,7 @@ absl::Status Compare() {
 }
 
 absl::Status Match() {
-  constexpr absl::string_view kImages[] = {
-      "adrian.jpg",
-      "BlueCup.jpg"};
+  constexpr absl::string_view kImages[] = {"adrian.jpg", "BlueCup.jpg"};
 
   cv::Mat src = cv::imread(path(kTestDataPath) / kImages[0]);
   if (src.empty()) return absl::InternalError("No source image");
@@ -243,4 +222,4 @@ absl::Status Match() {
   return absl::OkStatus();
 }
 
-} // namespace hello::histograms
+}  // namespace hello::histograms
