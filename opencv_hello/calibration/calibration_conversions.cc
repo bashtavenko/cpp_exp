@@ -1,6 +1,5 @@
-#include <vector>
-
 #include "calibration_conversions.h"
+#include <vector>
 #include "absl/strings/str_format.h"
 
 namespace hello::calibration {
@@ -9,11 +8,11 @@ absl::StatusOr<CalibrationData>
 CalibrationConversions::CalibrationDataFromProto(
     const CalibrationConfig& proto) {
   CalibrationData result;
-  for (const ImagePoint& image_point: proto.image_points()) {
+  for (const ImagePoint& image_point : proto.image_points()) {
     result.image_points.push_back(
         cv::Point2i(image_point.x(), image_point.y()));
   }
-  for (const ObjectPoint& object_point: proto.object_points()) {
+  for (const ObjectPoint& object_point : proto.object_points()) {
     result.object_points.push_back(
         cv::Point3f(object_point.x(), object_point.y(), object_point.z()));
   }
@@ -78,12 +77,12 @@ absl::StatusOr<CalibrationConfig>
 CalibrationConversions::ProtoFromCalibrationData(
     const CalibrationData& calibration_data) {
   CalibrationConfig proto;
-  for (const cv::Point2i& image_point: calibration_data.image_points) {
+  for (const cv::Point2i& image_point : calibration_data.image_points) {
     auto p = proto.mutable_image_points()->Add();
     p->set_x(image_point.x);
     p->set_y(image_point.y);
   }
-  for (const cv::Point3f& object_point: calibration_data.object_points) {
+  for (const cv::Point3f& object_point : calibration_data.object_points) {
     auto p = proto.mutable_object_points()->Add();
     p->set_x(object_point.x);
     p->set_y(object_point.y);

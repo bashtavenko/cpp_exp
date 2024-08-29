@@ -6,7 +6,6 @@
 namespace hello::transformations {
 absl::Status AffineTransform();
 absl::Status PerspectiveTransform();
-} // namespace hello::transformations
+}  // namespace hello::transformations
 
-
-#endif //TRANSFORMATIONS_TRANSFORMATIONS_H_
+#endif  // TRANSFORMATIONS_TRANSFORMATIONS_H_

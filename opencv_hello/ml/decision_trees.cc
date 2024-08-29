@@ -1,26 +1,25 @@
-#include "ml.h"
-
-#include "opencv2/opencv.hpp"
 #include <glog/logging.h>
 #include "absl/strings/str_format.h"
+#include "ml.h"
+#include "opencv2/opencv.hpp"
 
 // CLion does not handle symbols in any of the directories
-//#include "opencv4/opencv2/ml.hpp"
-//#include "opencv4/opencv2/opencv.hpp"
-//#include "opencv4/opencv2/core.hpp"
+// #include "opencv4/opencv2/ml.hpp"
+// #include "opencv4/opencv2/opencv.hpp"
+// #include "opencv4/opencv2/core.hpp"
 
 namespace hello::ml {
 
 constexpr char kDirectory[] = "testdata/mushroom/agaricus-lepiota.data";
 
 absl::Status RunDecisionTrees() {
-  cv::Ptr<cv::ml::TrainData> data_set =
-      cv::ml::TrainData::loadFromCSV(kDirectory, // Input file name
-                                     0, // Header lines (ignore this many)
-                                     0, // Responses are (start) at thie column
-                                     1, // Inputs start at this column
-                                     "cat[0-22]" // All 23 columns are categorical
-      );
+  cv::Ptr<cv::ml::TrainData> data_set = cv::ml::TrainData::loadFromCSV(
+      kDirectory,  // Input file name
+      0,           // Header lines (ignore this many)
+      0,           // Responses are (start) at thie column
+      1,           // Inputs start at this column
+      "cat[0-22]"  // All 23 columns are categorical
+  );
 
   // Use defaults for delimeter (',') and missch ('?')
   // Verify that we read in what we think.
@@ -29,11 +28,11 @@ absl::Status RunDecisionTrees() {
   const int n_samples = data_set->getNSamples();
   // If file path is wrong, it does not really work.
   if (n_samples == 0)
-    return absl::InternalError(absl::StrFormat("Could not read file: %s",
-                                               kDirectory));
+    return absl::InternalError(
+        absl::StrFormat("Could not read file: %s", kDirectory));
 
-  LOG(INFO)
-      << absl::StreamFormat("Read %i samples from %s", n_samples, kDirectory);
+  LOG(INFO) << absl::StreamFormat("Read %i samples from %s", n_samples,
+                                  kDirectory);
 
   // Split the data, so that 90% is train data
   //
@@ -58,11 +57,11 @@ absl::Status RunDecisionTrees() {
   dtree->setRegressionAccuracy(0.01f);
   dtree->setUseSurrogates(false /* true */);
   dtree->setMaxCategories(15);
-  dtree->setCVFolds(0 /*10*/); // nonzero causes core dump
+  dtree->setCVFolds(0 /*10*/);  // nonzero causes core dump
   dtree->setUse1SERule(true);
   dtree->setTruncatePrunedTree(true);
   // dtree->setPriors( priors );
-  dtree->setPriors(cv::Mat()); // ignore priors for now...
+  dtree->setPriors(cv::Mat());  // ignore priors for now...
   // Now train the model
   // NB: we are only using the "train" part of the data set
   //
@@ -74,8 +73,8 @@ absl::Status RunDecisionTrees() {
   //
   cv::Mat results;
   float train_performance = dtree->calcError(data_set,
-                                             false, // use train data
-                                             results // cv::noArray()
+                                             false,   // use train data
+                                             results  // cv::noArray()
   );
   std::vector<cv::String> names;
   data_set->getNames(names);
@@ -91,8 +90,8 @@ absl::Status RunDecisionTrees() {
     for (int i = 0; i < data_set->getNTrainSamples(); ++i) {
       float received = results.at<float>(i, 0);
       float expected = expected_responses.at<float>(i, 0);
-      cv::String r_str = names[(int) received];
-      cv::String e_str = names[(int) expected];
+      cv::String r_str = names[(int)received];
+      cv::String e_str = names[(int)expected];
       LOG(INFO) << absl::StreamFormat("Expected: %s, got %s", e_str, r_str);
       if (received == expected)
         good++;
@@ -100,17 +99,16 @@ absl::Status RunDecisionTrees() {
         bad++;
       total++;
     }
-    LOG(INFO)
-        << absl::StreamFormat("Correct answers: %f,  incorrect answers:%f",
-                              (float(good) / total),
-                              (float(bad) / total));
+    LOG(INFO) << absl::StreamFormat(
+        "Correct answers: %f,  incorrect answers:%f", (float(good) / total),
+        (float(bad) / total));
   }
   const float test_performance = dtree->calcError(data_set,
-                                                  true, // use test data
-                                                  results // cv::noArray()
+                                                  true,    // use test data
+                                                  results  // cv::noArray()
   );
   LOG(INFO) << "Performance on training data: " << train_performance;
   LOG(INFO) << "Performance on testing data: " << test_performance;
   return absl::OkStatus();
 }
-} // namespace hello::ml
+}  // namespace hello::ml

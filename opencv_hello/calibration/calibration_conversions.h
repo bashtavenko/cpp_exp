@@ -3,11 +3,10 @@
 
 #include <cstdlib>
 #include <vector>
-
+#include "absl/status/statusor.h"
 #include "calibration/calibration_config.pb.h"
 #include "calibration/calibration_data.pb.h"
 #include "opencv2/core.hpp"
-#include "absl/status/statusor.h"
 
 namespace hello::calibration {
 
@@ -23,16 +22,16 @@ struct CalibrationData {
   cv::Mat tvec;
   bool operator==(const CalibrationData& other) const {
     return image_points == other.image_points &&
-        object_points == other.object_points &&
-        std::abs(reprojection_error - other.reprojection_error) <
-            kErrorTolerance &&
-        CompareMat(camera_matrix, other.camera_matrix, kErrorTolerance) &&
-        CompareMat(distortion_parameters, other.distortion_parameters,
-                   kErrorTolerance) &&
-        CompareMat(homography_matrix, other.homography_matrix,
-                   kErrorTolerance) &&
-        CompareMat(rvec, other.rvec, kErrorTolerance) &&
-        CompareMat(tvec, other.tvec, kErrorTolerance);
+           object_points == other.object_points &&
+           std::abs(reprojection_error - other.reprojection_error) <
+               kErrorTolerance &&
+           CompareMat(camera_matrix, other.camera_matrix, kErrorTolerance) &&
+           CompareMat(distortion_parameters, other.distortion_parameters,
+                      kErrorTolerance) &&
+           CompareMat(homography_matrix, other.homography_matrix,
+                      kErrorTolerance) &&
+           CompareMat(rvec, other.rvec, kErrorTolerance) &&
+           CompareMat(tvec, other.tvec, kErrorTolerance);
   }
 
   bool CompareMat(const cv::Mat& a, const cv::Mat& b, float error) const {
@@ -52,6 +51,6 @@ struct CalibrationConversions {
   static absl::StatusOr<CalibrationConfig> ProtoFromCalibrationData(
       const CalibrationData& calibration_data);
 };
-}  // hello::calibration
+}  // namespace hello::calibration
 
-#endif //CALIBRATION_CALIBRATION_CONVERSIONS_H_
+#endif  // CALIBRATION_CALIBRATION_CONVERSIONS_H_

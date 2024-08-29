@@ -8,6 +8,6 @@ namespace hello::tracking {
 absl::Status Farneback(absl::string_view file_name);
 absl::Status Kalman(absl::string_view file_name);
 
-} // namespace hello::kalman
+}  // namespace hello::tracking
 
-#endif //TRACING_TRACKING_H_
+#endif  // TRACING_TRACKING_H_

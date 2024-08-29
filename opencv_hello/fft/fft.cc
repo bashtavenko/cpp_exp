@@ -31,13 +31,14 @@ absl::Status FastConv() {
   cv::dft(dft_A, dft_A, 0, A.rows);
   cv::dft(dft_B, dft_B, 0, B.rows);
 
-  // set the last parameter to false to compute convolution instead of correlation
+  // set the last parameter to false to compute convolution instead of
+  // correlation
   //
   cv::mulSpectrums(dft_A, dft_B, dft_A, 0, true);
   cv::idft(dft_A, dft_A, cv::DFT_SCALE, A.rows + B.rows - 1);
 
-  cv::Mat
-      corr = dft_A(cv::Rect(0, 0, A.cols + B.cols - 1, A.rows + B.rows - 1));
+  cv::Mat corr =
+      dft_A(cv::Rect(0, 0, A.cols + B.cols - 1, A.rows + B.rows - 1));
   cv::normalize(corr, corr, 0, 1, cv::NORM_MINMAX, corr.type());
   cv::pow(corr, 3.0, corr);
 
@@ -52,4 +53,4 @@ absl::Status FastConv() {
   return absl::OkStatus();
 }
 
-} // namespace hello::fft
+}  // namespace hello::fft

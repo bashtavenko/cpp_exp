@@ -6,7 +6,7 @@ namespace hello::fft {
 
 absl::Status FastConv();
 
-} // namespace hello::fft
+}  // namespace hello::fft
 #define FFT_FFT_H_
 
-#endif //FFT_FFT_H_
+#endif  // FFT_FFT_H_

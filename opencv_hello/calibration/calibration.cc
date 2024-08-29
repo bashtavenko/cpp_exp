@@ -2,8 +2,8 @@
 #include <glog/logging.h>
 #include "absl/status/statusor.h"
 #include "absl/strings/str_format.h"
-#include "calibration/calibration_conversions.h"
 #include "calibration/calibration_config.pb.h"
+#include "calibration/calibration_conversions.h"
 
 namespace hello::calibration {
 
@@ -59,7 +59,7 @@ absl::StatusOr<CalibrationConfig> Calibrate(
   std::vector<std::vector<cv::Point2f>> all_image_points;
   std::vector<cv::Point2f> casted_image_points;
   casted_image_points.reserve(image_points.size());
-  for (const cv::Point2i image_point: image_points) {
+  for (const cv::Point2i image_point : image_points) {
     casted_image_points.push_back(cv::Point2f(image_point.x, image_point.y));
   }
   all_image_points.push_back(casted_image_points);
@@ -84,13 +84,14 @@ absl::StatusOr<CalibrationConfig> Calibrate(
   const auto calibration_config =
       CalibrationConversions::ProtoFromCalibrationData(
           CalibrationData{.image_points = image_points,
-              .object_points = object_points,
-              .camera_matrix = intrinsic_matrix,
-              .distortion_parameters = distortion_coeffs,
-              .homography_matrix = homography,
-              .reprojection_error = err,
-              .rvec = rvec});
-  if (!calibration_config.ok()) return absl::InternalError(calibration_config.status().message());
+                          .object_points = object_points,
+                          .camera_matrix = intrinsic_matrix,
+                          .distortion_parameters = distortion_coeffs,
+                          .homography_matrix = homography,
+                          .reprojection_error = err,
+                          .rvec = rvec});
+  if (!calibration_config.ok())
+    return absl::InternalError(calibration_config.status().message());
   return calibration_config;
 }
-} // namespace hello::calibration
+}  // namespace hello::calibration

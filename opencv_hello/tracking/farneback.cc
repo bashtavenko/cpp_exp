@@ -1,17 +1,17 @@
 #include <filesystem>
-#include "tracking.h"
+#include "absl/strings/str_cat.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/video/tracking.hpp"
-#include "absl/strings/str_cat.h"
+#include "tracking.h"
 
 namespace hello::tracking {
 constexpr absl::string_view kTestDataPath = "testdata";
 
 constexpr double pyr_scale = 0.85;  // Scale between pyramid levels (< 1.0)
 constexpr int levels = 7;           // Number of pyramid levels
-constexpr int win_size = 13;         // Size of window for pre-smoothing pass
-constexpr int iterations = 6;      // Iterations for each pyramid level
+constexpr int win_size = 13;        // Size of window for pre-smoothing pass
+constexpr int iterations = 6;       // Iterations for each pyramid level
 constexpr int poly_n = 5;           // Area over which polynomial will be fit
 constexpr double poly_sigma = 1.1;  // Width of fit polygon
 
@@ -41,10 +41,10 @@ absl::Status Farneback(absl::string_view file_name) {
   if (!capture.isOpened())
     return absl::InternalError(absl::StrCat("No video - ", file_path));
 
-  cv::Mat optflow;  // optical flow result
+  cv::Mat optflow;        // optical flow result
   cv::Mat optflow_image;  // optical flow visualization
-  cv::Mat prev_frame;  // previous frame grayscale image
-  cv::Mat frame;  // current frame grayscale image
+  cv::Mat prev_frame;     // previous frame grayscale image
+  cv::Mat frame;          // current frame grayscale image
   cv::Mat colored_frame;  // current frame RGB-image
   constexpr char kWindowName[] = "Farneback";
 
@@ -59,15 +59,8 @@ absl::Status Farneback(absl::string_view file_name) {
       cvtColor(colored_frame, frame, cv::COLOR_BGR2GRAY);
     }
     if (prev_frame.rows) {
-      calcOpticalFlowFarneback(prev_frame,
-                               frame,
-                               optflow,
-                               pyr_scale,
-                               levels,
-                               win_size,
-                               iterations,
-                               poly_n,
-                               poly_sigma,
+      calcOpticalFlowFarneback(prev_frame, frame, optflow, pyr_scale, levels,
+                               win_size, iterations, poly_n, poly_sigma,
                                cv::OPTFLOW_FARNEBACK_GAUSSIAN);
       optflow_image = GetOptFlowImage(optflow, colored_frame);
       cv::imshow(kWindowName, optflow_image);
@@ -79,4 +72,4 @@ absl::Status Farneback(absl::string_view file_name) {
   return absl::OkStatus();
 }
 
-} // namespace hello::tracking
+}  // namespace hello::tracking

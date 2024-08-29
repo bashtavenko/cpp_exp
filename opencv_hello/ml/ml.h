@@ -8,6 +8,6 @@ namespace hello::ml {
 absl::Status RunKMeans();
 absl::Status RunDecisionTrees();
 
-} // namespace hello::ml
+}  // namespace hello::ml
 
-#endif //ML_ML_H_
+#endif  // ML_ML_H_

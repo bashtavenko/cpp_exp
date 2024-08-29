@@ -1,11 +1,9 @@
-#include <filesystem>
-
 #include "filters.h"
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
-
 #include <glog/stl_logging.h>
+#include <filesystem>
 #include "absl/strings/str_format.h"
+#include "opencv2/highgui.hpp"
+#include "opencv2/opencv.hpp"
 
 namespace hello::convolution {
 using ::std::filesystem::path;
@@ -13,7 +11,6 @@ using ::std::filesystem::path;
 constexpr absl::string_view kTestDataPath = "testdata";
 
 void sum_rgb(const cv::Mat& src, cv::Mat& dst) {
-
   // Split image onto the color planes.
   //
   std::vector<cv::Mat> planes;
@@ -55,21 +52,9 @@ absl::Status AdaptiveThreshold() {
 
   cv::Mat it;
   cv::Mat iat;
-  cv::threshold(
-      img,
-      it,
-      fixed_threshold,
-      255,
-      threshold_type);
-  cv::adaptiveThreshold(
-      img,
-      iat,
-      255,
-      adaptive_method,
-      threshold_type,
-      block_size,
-      offset
-  );
+  cv::threshold(img, it, fixed_threshold, 255, threshold_type);
+  cv::adaptiveThreshold(img, iat, 255, adaptive_method, threshold_type,
+                        block_size, offset);
   cv::imshow("Raw", img);
   cv::imshow("Threshold", it);
   cv::imshow("Adaptive Threshold", iat);
@@ -77,4 +62,4 @@ absl::Status AdaptiveThreshold() {
   return absl::OkStatus();
 }
 
-} // namespace hello::convolution
+}  // namespace hello::convolution

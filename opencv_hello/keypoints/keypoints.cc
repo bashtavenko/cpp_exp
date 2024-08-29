@@ -1,18 +1,15 @@
 #include "keypoints.h"
-
 #include <filesystem>
-#include "glog/logging.h"
-#include "absl/strings/str_format.h"
-#include "absl/strings/str_cat.h"
-#include "absl/algorithm/container.h"
-
-#include "util/status_macros.h"
-
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/features2d.hpp>
 #include <opencv2/calib3d.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/core/utility.hpp>
+#include <opencv2/features2d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include "absl/algorithm/container.h"
+#include "absl/strings/str_cat.h"
+#include "absl/strings/str_format.h"
+#include "glog/logging.h"
+#include "util/status_macros.h"
 
 namespace hello::keypoints {
 using ::std::filesystem::path;
@@ -22,19 +19,16 @@ constexpr absl::string_view kTestDataPath = "testdata";
 constexpr double kDistanceCoef = 4.0;
 constexpr int kMaxMatchingSize = 50;
 
-inline void detect_and_compute(DescriptorType type,
-                               cv::Mat& img,
-                               std::vector<cv::KeyPoint>& kpts,
-                               cv::Mat& desc) {
+inline void detect_and_compute(DescriptorType type, cv::Mat& img,
+                               std::vector<cv::KeyPoint>& kpts, cv::Mat& desc) {
   // kFast and kBlob don't work - no matches
   if (type == DescriptorType::kFast) {
-    cv::Ptr<cv::FastFeatureDetector>
-        detector = cv::FastFeatureDetector::create(10, true);
+    cv::Ptr<cv::FastFeatureDetector> detector =
+        cv::FastFeatureDetector::create(10, true);
     detector->detect(img, kpts);
   }
   if (type == DescriptorType::kBlob) {
-    cv::Ptr<cv::SimpleBlobDetector>
-        detector = cv::SimpleBlobDetector::create();
+    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create();
     detector->detect(img, kpts);
   }
   if (type == DescriptorType::kSift) {
@@ -59,9 +53,7 @@ inline void detect_and_compute(DescriptorType type,
   }
 }
 
-absl::Status match(MatchAlgorithm type,
-                   cv::Mat& desc1,
-                   cv::Mat& desc2,
+absl::Status match(MatchAlgorithm type, cv::Mat& desc1, cv::Mat& desc2,
                    std::vector<cv::DMatch>& matches) {
   matches.clear();
   if (type == MatchAlgorithm::kBf) {
@@ -106,19 +98,16 @@ inline void findKeyPointsHomography(std::vector<cv::KeyPoint>& kpts1,
   findHomography(pts1, pts2, cv::RANSAC, 4, match_mask);
 }
 
-absl::Status Run(DescriptorType descriptor_type,
-                 MatchAlgorithm match_algorithm,
+absl::Status Run(DescriptorType descriptor_type, MatchAlgorithm match_algorithm,
                  absl::string_view image_file_name,
                  absl::string_view scene_file_name) {
   cv::Mat img1 = cv::imread(path(kTestDataPath) / image_file_name);
   if (img1.empty())
-    return absl::InternalError(absl::StrCat("No image - ",
-                                            image_file_name));
+    return absl::InternalError(absl::StrCat("No image - ", image_file_name));
 
   cv::Mat img2 = cv::imread(path(kTestDataPath) / scene_file_name);
   if (img2.empty())
-    return absl::InternalError(absl::StrCat("No scene - ",
-                                            scene_file_name));
+    return absl::InternalError(absl::StrCat("No scene - ", scene_file_name));
 
   if (img1.channels() != 1) {
     cvtColor(img1, img1, cv::COLOR_RGB2GRAY);
@@ -145,15 +134,8 @@ absl::Status Run(DescriptorType descriptor_type,
   findKeyPointsHomography(kpts1, kpts2, matches, match_mask);
 
   cv::Mat res;
-  cv::drawMatches(img1,
-                  kpts1,
-                  img2,
-                  kpts2,
-                  matches,
-                  res,
-                  cv::Scalar::all(-1),
-                  cv::Scalar::all(-1),
-                  match_mask,
+  cv::drawMatches(img1, kpts1, img2, kpts2, matches, res, cv::Scalar::all(-1),
+                  cv::Scalar::all(-1), match_mask,
                   cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
 
   cv::imshow("result", res);
@@ -161,4 +143,4 @@ absl::Status Run(DescriptorType descriptor_type,
 
   return absl::OkStatus();
 }
-} // namespace hello::keypoints
+}  // namespace hello::keypoints

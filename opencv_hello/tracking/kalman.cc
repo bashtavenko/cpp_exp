@@ -1,20 +1,18 @@
 #include <filesystem>
-
-#include "tracking.h"
+#include "absl/strings/str_cat.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/video/tracking.hpp"
-#include "absl/strings/str_cat.h"
+#include "tracking.h"
 
 namespace hello::tracking {
 constexpr absl::string_view kTestDataPath = "testdata";
 using std::filesystem::path;
 
 cv::Point MakePoint(const cv::Mat& img, const cv::Mat& mat) {
-  return cv::Point(cvRound(
-                       img.cols / 2 + img.cols / 3 * cos(mat.at<float>(0))),
-                   cvRound(
-                       img.rows / 2 - img.cols / 3 * sin(mat.at<float>(0))));
+  return cv::Point(
+      cvRound(img.cols / 2 + img.cols / 3 * cos(mat.at<float>(0))),
+      cvRound(img.rows / 2 - img.cols / 3 * sin(mat.at<float>(0))));
 }
 
 absl::Status Kalman(absl::string_view file_name) {
@@ -73,23 +71,19 @@ absl::Status Kalman(absl::string_view file_name) {
 
     // generate measurement (z_k)
     //
-    cv::randn(z_k, 0.0,
-              sqrt(static_cast<double>(kalman.measurementNoiseCov.at<float>(0,
-                                                                            0))));
+    cv::randn(
+        z_k, 0.0,
+        sqrt(static_cast<double>(kalman.measurementNoiseCov.at<float>(0, 0))));
     z_k = kalman.measurementMatrix * x_k + z_k;
 
     // plot points (e.g., convert
     //
     img = cv::Scalar::all(0);
-    cv::circle(img,
-               MakePoint(img, z_k),
-               4,
+    cv::circle(img, MakePoint(img, z_k), 4,
                cv::Scalar(128, 255, 255));  // observed
     cv::circle(img, MakePoint(img, y_k), 4, cv::Scalar(255, 255, 255), 2);
     // predicted
-    cv::circle(img,
-               MakePoint(img, x_k),
-               4,
+    cv::circle(img, MakePoint(img, x_k), 4,
                cv::Scalar(0, 0, 255));  // actual to
     // planar co-ordinates and draw
     cv::imshow(kWindowName, img);
@@ -101,10 +95,9 @@ absl::Status Kalman(absl::string_view file_name) {
     // Apply the transition matrix 'F' (e.g., step time forward)
     // and also apply the "process" noise w_k
     //
-    cv::randn(w_k,
-              0.0,
-              sqrt(static_cast<double>(kalman.processNoiseCov.at<float>(0,
-                                                                        0))));
+    cv::randn(
+        w_k, 0.0,
+        sqrt(static_cast<double>(kalman.processNoiseCov.at<float>(0, 0))));
     x_k = kalman.transitionMatrix * x_k + w_k;
 
     // exit if user hits 'Esc'
@@ -116,4 +109,4 @@ absl::Status Kalman(absl::string_view file_name) {
   return absl::OkStatus();
 }
 
-} // namespace hello::tracking
+}  // namespace hello::tracking

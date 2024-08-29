@@ -39,9 +39,9 @@ TEST(Mat, Works) {
   constexpr int x = 16;
   constexpr int y = 32;
   cv::Vec3b intensity = mat2.at<cv::Vec3b>(x, y);
-  uchar const blue = intensity[0];
-  uchar const green = intensity[1];
-  uchar const red = intensity[2];
+  const uchar blue = intensity[0];
+  const uchar green = intensity[1];
+  const uchar red = intensity[2];
   ASSERT_THAT(blue, Eq(255));
   ASSERT_THAT(green, Eq(255));
   ASSERT_THAT(red, Eq(255));

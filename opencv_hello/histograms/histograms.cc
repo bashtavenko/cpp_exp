@@ -20,7 +20,7 @@ absl::Status Compute() {
 
   float h_ranges[] = {0, 180};  // hue is [0, 180]
   float s_ranges[] = {0, 256};
-  float const* ranges[] = {h_ranges, s_ranges};
+  const float* ranges[] = {h_ranges, s_ranges};
   int histSize[] = {30, 32}, ch[] = {0, 1};
 
   cv::Mat hist;
@@ -104,7 +104,7 @@ absl::Status Compare() {
   int hist_size[] = {h_bins, s_bins}, ch[] = {0, 1};
   float h_ranges[] = {0, 180};  // hue range is [0,180]
   float s_ranges[] = {0, 255};
-  float const* ranges[] = {h_ranges, s_ranges};
+  const float* ranges[] = {h_ranges, s_ranges};
   int scale = 10;
 
   for (i = 0; i < 5; ++i) {

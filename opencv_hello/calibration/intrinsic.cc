@@ -1,14 +1,12 @@
 #include "intrinsic.h"
-
-#include <filesystem>
 #include <glog/logging.h>
-#include "absl/strings/str_format.h"
-#include "absl/algorithm/container.h"
-
-#include <opencv2/highgui/highgui.hpp>
+#include <filesystem>
 #include <opencv2/calib3d.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/core/utility.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include "absl/algorithm/container.h"
+#include "absl/strings/str_format.h"
 
 namespace hello::calibration {
 
@@ -24,13 +22,13 @@ absl::Status RunInstrinsicCalibration() {
 
   std::vector<std::string> file_names;
 
-  for (auto const& dir_entry: directory_iterator(kDirectory)) {
+  for (const auto& dir_entry : directory_iterator(kDirectory)) {
     file_names.push_back(dir_entry.path());
   }
   absl::c_sort(file_names);
   int board_n = kBoardW * kBoardH;  // number of corners
-  cv::Size
-      board_sz = cv::Size(kBoardW, kBoardH); // width and height of the board
+  cv::Size board_sz =
+      cv::Size(kBoardW, kBoardH);  // width and height of the board
 
   // PROVIDE PPOINT STORAGE
   //
@@ -49,11 +47,7 @@ absl::Status RunInstrinsicCalibration() {
       continue;
     }
     image_size = image0.size();
-    cv::resize(image0,
-               image,
-               cv::Size(),
-               kScaleFactor,
-               kScaleFactor,
+    cv::resize(image0, image, cv::Size(), kScaleFactor, kScaleFactor,
                cv::INTER_LINEAR);
 
     // Find the board
@@ -63,9 +57,7 @@ absl::Status RunInstrinsicCalibration() {
 
     // Draw it
     //
-    drawChessboardCorners(image,
-                          board_sz,
-                          corners,
+    drawChessboardCorners(image, board_sz, corners,
                           found);  // will draw only if found
 
     // If we got a good board, add it to our data
@@ -142,5 +134,4 @@ absl::Status RunInstrinsicCalibration() {
   return absl::OkStatus();
 }
 
-} // namespace hello::calibration
-
+}  // namespace hello::calibration
