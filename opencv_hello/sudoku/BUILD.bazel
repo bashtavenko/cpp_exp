@@ -1,0 +1,31 @@
+cc_binary(
+    name = "bootcamp_main",
+    srcs = ["bootcamp_main.cc"],
+    data = ["//sudoku/testdata"],
+    deps = [
+        "//:opencv",
+        "@absl//absl/strings:str_format",
+        ":detection",
+        "@gflags",
+        "@glog",
+    ],
+)
+
+cc_library(
+    name = "detection",
+    srcs = ["detection.cc"],
+    hdrs = ["detection.h"],
+    deps = ["//:opencv"],
+)
+
+cc_test(
+    name = "detection_test",
+    srcs = ["detection_test.cc"],
+    data = ["//sudoku/testdata"],
+    deps = [
+        ":detection",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@absl//absl/strings",
+        "@googletest//:gtest_main",
+    ],
+)
