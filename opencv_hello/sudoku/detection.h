@@ -12,10 +12,7 @@ struct SudokuDetection {
   cv::Rect digit_position;  // The position of the cell in the original image
 };
 
-std::vector<SudokuDetection> DetectCells(const cv::Mat& image);
-
-// This is possible but noisy.
-std::vector<cv::Mat> DetectCellsWithContours(const cv::Mat& image);
+std::vector<std::vector<SudokuDetection>> DetectCells(const cv::Mat& image);
 
 }  // namespace sudoku
 

@@ -3,9 +3,10 @@
 
 namespace sudoku {
 
-std::vector<SudokuDetection> DetectCells(const cv::Mat& image) {
+std::vector<std::vector<SudokuDetection>> DetectCells(const cv::Mat& image) {
+  constexpr size_t n = 9;
+  std::vector<std::vector<SudokuDetection>> detections(n, std::vector<SudokuDetection>(n));
   cv::Mat gray;
-  std::vector<SudokuDetection> detections;
 
   // 1. Preprocessing
   cv::Mat blurred;
@@ -75,9 +76,9 @@ std::vector<SudokuDetection> DetectCells(const cv::Mat& image) {
   cv::warpPerspective(gray, warped, warp_matrix, cv::Size(450, 450));
 
   // 4. Divide into Cells
-  int cell_size = 450 / 9;
-  for (int y = 0; y < 9; ++y) {
-    for (int x = 0; x < 9; ++x) {
+  int cell_size = 450 / n;
+  for (int y = 0; y < n; ++y) {
+    for (int x = 0; x < n; ++x) {
       cv::Rect cell_region(x * cell_size, y * cell_size, cell_size, cell_size);
       cv::Mat cell = warped(cell_region).clone();
 
@@ -96,7 +97,7 @@ std::vector<SudokuDetection> DetectCells(const cv::Mat& image) {
       cv::Rect bounding_box = cv::boundingRect(original_corners);
 
       // Add the cell and its original bounding box to the output
-      detections.push_back(SudokuDetection{cell, bounding_box});
+      detections[y][x] = SudokuDetection{cell, bounding_box};
     }
   }
 

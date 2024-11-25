@@ -20,10 +20,10 @@ int main(int argc, char** argv) {
 cv:
   imshow(kWindow, img);
   for (int i = 0; i < 9; ++i) {
-    cv::imshow(kDigits + "-" + std::to_string(i), detection[i].digit_image);
+    cv::imshow(kDigits + "-" + std::to_string(i), detection[0][i].digit_image);
 
     cv::Point center =
-        (detection[i].digit_position.tl() + detection[i].digit_position.br()) *
+        (detection[0][i].digit_position.tl() + detection[0][i].digit_position.br()) *
         0.5;
     cv::putText(img, "5", center, cv::FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar(255, 0, 0), 2);
