@@ -6,11 +6,17 @@
 
 namespace sudoku {
 
-std::vector<cv::Mat> DetectCells(const cv::Mat& image);
+// Result of sudoku detection
+struct SudokuDetection {
+  cv::Mat digit_image;      // The extracted cell image (digit or empty cell)
+  cv::Rect digit_position;  // The position of the cell in the original image
+};
+
+std::vector<SudokuDetection> DetectCells(const cv::Mat& image);
 
 // This is possible but noisy.
 std::vector<cv::Mat> DetectCellsWithContours(const cv::Mat& image);
 
-} // namespace sudoku
+}  // namespace sudoku
 
 #endif  // OPENCV_HELLO_SUDOKU_DETECTION_H_

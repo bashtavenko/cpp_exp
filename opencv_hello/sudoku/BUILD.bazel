@@ -3,9 +3,9 @@ cc_binary(
     srcs = ["bootcamp_main.cc"],
     data = ["//sudoku/testdata"],
     deps = [
+        ":detection",
         "//:opencv",
         "@absl//absl/strings:str_format",
-        ":detection",
         "@gflags",
         "@glog",
     ],
@@ -24,8 +24,8 @@ cc_test(
     data = ["//sudoku/testdata"],
     deps = [
         ":detection",
-        "@bazel_tools//tools/cpp/runfiles",
         "@absl//absl/strings",
+        "@bazel_tools//tools/cpp/runfiles",
         "@googletest//:gtest_main",
     ],
 )

@@ -3,9 +3,9 @@
 
 namespace sudoku {
 
-std::vector<cv::Mat> DetectCells(const cv::Mat& image) {
+std::vector<SudokuDetection> DetectCells(const cv::Mat& image) {
   cv::Mat gray;
-  std::vector<cv::Mat> cells;
+  std::vector<SudokuDetection> detections;
 
   // 1. Preprocessing
   cv::Mat blurred;
@@ -32,7 +32,7 @@ std::vector<cv::Mat> DetectCells(const cv::Mat& image) {
       largest_contour = contours[i];
     }
   }
-  if (largest_contour.size() < 4) return cells;
+  if (largest_contour.size() < 4) return detections;
 
   // 3. Warp Perspective
   std::vector<cv::Point2f> corners(4);
@@ -43,7 +43,7 @@ std::vector<cv::Mat> DetectCells(const cv::Mat& image) {
                    0.02 * cv::arcLength(largest_contour,
                                         /*closed=*/true),
                    /*closed=*/true);
-  if (corners.size() != 4) return cells;
+  if (corners.size() != 4) return detections;
 
   // Order corners consistently (top-left, top-right, bottom-right, bottom-left)
   std::sort(corners.begin(), corners.end(),
@@ -64,6 +64,12 @@ std::vector<cv::Mat> DetectCells(const cv::Mat& image) {
       std::vector<cv::Point2f>{cv::Point2f(0, 0), cv::Point2f(450, 0),
                                cv::Point2f(450, 450), cv::Point2f(0, 450)});
 
+  // Inverse transform matrix to map warped back to original coordinates
+  cv::Mat inverse_warp_matrix = cv::getPerspectiveTransform(
+      std::vector<cv::Point2f>{cv::Point2f(0, 0), cv::Point2f(450, 0),
+                               cv::Point2f(450, 450), cv::Point2f(0, 450)},
+      sorted_corners);
+
   cv::Mat warped;
   // Applies transformation matrix to the entire image.
   cv::warpPerspective(gray, warped, warp_matrix, cv::Size(450, 450));
@@ -73,11 +79,28 @@ std::vector<cv::Mat> DetectCells(const cv::Mat& image) {
   for (int y = 0; y < 9; ++y) {
     for (int x = 0; x < 9; ++x) {
       cv::Rect cell_region(x * cell_size, y * cell_size, cell_size, cell_size);
-      cells.push_back(warped(cell_region).clone());
+      cv::Mat cell = warped(cell_region).clone();
+
+      // Calculate the corners of the cell in warped coordinates
+      std::vector<cv::Point2f> cell_corners = {
+          cv::Point2f(x * cell_size, y * cell_size),
+          cv::Point2f((x + 1) * cell_size, y * cell_size),
+          cv::Point2f((x + 1) * cell_size, (y + 1) * cell_size),
+          cv::Point2f(x * cell_size, (y + 1) * cell_size),
+      };
+
+      // Map cell corners back to the original image to get a bounding box
+      std::vector<cv::Point2f> original_corners(4);
+      cv::perspectiveTransform(cell_corners, original_corners, inverse_warp_matrix);
+
+      cv::Rect bounding_box = cv::boundingRect(original_corners);
+
+      // Add the cell and its original bounding box to the output
+      detections.push_back(SudokuDetection{cell, bounding_box});
     }
   }
 
-  return cells;
+  return detections;
 }
 
 // This is possible but noisy, just use contours.
