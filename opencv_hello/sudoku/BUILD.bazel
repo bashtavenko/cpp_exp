@@ -29,3 +29,30 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_library(
+    name = "digit_detector",
+    srcs = ["digit_detector.cc"],
+    hdrs = ["digit_detector.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//:opencv",
+        "@absl//absl/flags:flag",
+        "@absl//absl/strings",
+        "@absl//absl/types:optional",
+        "@glog",
+    ],
+)
+
+cc_test(
+    name = "digit_detector_test",
+    srcs = ["digit_detector_test.cc"],
+    data = ["model.yml",
+            "//sudoku/testdata"],
+    deps = [
+        ":digit_detector",
+        "//:opencv",
+        "@bazel_tools//tools/cpp/runfiles",
+        "@googletest//:gtest_main",
+    ],
+)

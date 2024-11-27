@@ -82,6 +82,9 @@ std::vector<std::vector<SudokuDetection>> DetectCells(const cv::Mat& image) {
       cv::Rect cell_region(x * cell_size, y * cell_size, cell_size, cell_size);
       cv::Mat cell = warped(cell_region).clone();
 
+      // Crop borders
+      cell = cell(cv::Rect(5, 5, 40, 40));
+
       // Calculate the corners of the cell in warped coordinates
       std::vector<cv::Point2f> cell_corners = {
           cv::Point2f(x * cell_size, y * cell_size),
