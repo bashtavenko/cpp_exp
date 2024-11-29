@@ -27,8 +27,6 @@ cv:
                        0.5;
     cv::putText(img, "5", center, cv::FONT_HERSHEY_SIMPLEX, 1,
                 cv::Scalar(255, 0, 0), 2);
-    cv::imwrite("/tmp/digit-" + std::to_string(i) + ".png",
-                detection[0][i].digit_image);
   }
   cv::imshow(kWindow, img);
 

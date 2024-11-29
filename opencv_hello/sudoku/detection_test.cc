@@ -20,7 +20,8 @@ TEST(DetectCells, Works) {
   cv::Mat image = cv::imread(files->Rlocation(
       std::filesystem::path(kTestDataPath) / "sudoku_9_9.png"));
   ASSERT_FALSE(image.empty());
-  EXPECT_THAT(DetectCells(image), SizeIs(81));
+  std::vector<std::vector<SudokuDetection>> result = DetectCells(image);
+  EXPECT_THAT(result[0][1].digit_position, cv::Rect(40, 0, 41, 41));
 }
 
 }  // namespace
