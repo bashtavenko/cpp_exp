@@ -21,9 +21,10 @@ cc_library(
 cc_test(
     name = "detection_test",
     srcs = ["detection_test.cc"],
-    data = ["//sudoku/testdata"],
+    data = ["//sudoku/testdata", "model.yml"],
     deps = [
         ":detection",
+        ":digit_detector",
         "@absl//absl/strings",
         "@bazel_tools//tools/cpp/runfiles",
         "@googletest//:gtest_main",

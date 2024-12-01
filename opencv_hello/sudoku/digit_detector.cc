@@ -59,9 +59,42 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
   // Load MNIST data and preprocess
   cv::Mat training_data;
   cv::Mat labels;
-
   std::vector<cv::Mat> images;
   std::vector<int> label_list;
+
+  auto synthetic_nine = [&]() {
+    constexpr char text[] = "9";
+    constexpr int32_t font_face =  cv::FONT_HERSHEY_SIMPLEX;
+    constexpr double font_scale = 1.0;
+    constexpr int32_t thickness = 2;
+    const auto color = cv::Scalar(255); // white
+
+    for (int i = 0; i < 1000 ; ++i) {
+      cv::Mat digit_image = cv::Mat::zeros(28, 28, CV_8U);  // Start with blank black image
+
+      // Calculate text size to center the digit
+      int baseline = 0;
+      cv::Size text_size = cv::getTextSize(text, font_face, font_scale, thickness, &baseline);
+      cv::Point text_org((28 - text_size.width) / 2, (28 + text_size.height) / 2);
+
+      // Write the digit '9' on the image (white digit)
+      cv::putText(digit_image, text, text_org, font_face, font_scale, color, thickness);
+
+      // Apply slight rotation
+      double angle = -15 + (std::rand() % 30);  // Random angle between -15 and 15
+      cv::Mat rotation_mat = cv::getRotationMatrix2D(cv::Point(14, 14), angle, 1.0);
+      cv::warpAffine(digit_image, digit_image, rotation_mat, digit_image.size());
+
+      // Flatten and normalize
+      digit_image = digit_image.reshape(1, 1);
+      digit_image.convertTo(digit_image, CV_32F, 1.0 / 255.0);
+
+      // Add to training data
+      images.push_back(digit_image);
+      label_list.push_back(9);
+    }
+  };
+
   for (int digit = 0; digit <= 9; ++digit) {
     std::string digit_dir =
         std::string(mnist_directory.data()) + "/" + std::to_string(digit);
@@ -85,11 +118,14 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
     label_list.push_back(0);
   }
 
+  // Add digits with 9
+  synthetic_nine();
+
   // Create training data and labels as matrices
   training_data = cv::Mat(images.size(), images[0].cols, CV_32F);
   labels = cv::Mat(label_list).reshape(1, label_list.size());
 
-  for (size_t i = 0; i < images.size(); ++i) {
+  for (size_t i = 1; i < images.size(); ++i) {
     images[i].convertTo(training_data.row(static_cast<int>(i)), CV_32F,
                         1.0 / 255.0);
   }
