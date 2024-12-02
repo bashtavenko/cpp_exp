@@ -25,16 +25,16 @@ TEST(DigitDetector, Works) {
   ASSERT_THAT(files, NotNull());
   DigitDetector detector;
   detector.Init(files->Rlocation(kModelPath.data()));
-//  ASSERT_THAT(detector.Detect(get_image("digit-1.png")), Optional(1));
-//  ASSERT_THAT(detector.Detect(get_image("digit-2.png")), Optional(2));
-  ASSERT_THAT(detector.Detect(get_image("digit-3.png")), Optional(3));
-  ASSERT_THAT(detector.Detect(get_image("digit-4.png")), Optional(4));
-  ASSERT_THAT(detector.Detect(get_image("digit-5.png")), Optional(5));
-  ASSERT_THAT(detector.Detect(get_image("digit-6.png")), Optional(6));
-  ASSERT_THAT(detector.Detect(get_image("digit-7.png")), Optional(7));
-  ASSERT_THAT(detector.Detect(get_image("digit-8.png")), Optional(8));
-//  ASSERT_THAT(detector.Detect(get_image("digit-9.png")), Optional(9));
-  ASSERT_THAT(detector.Detect(get_image("digit-blank.png")), Optional(0));
+  EXPECT_THAT(detector.Detect(get_image("digit-1.png")), Optional(1));
+  EXPECT_THAT(detector.Detect(get_image("digit-2.png")), Optional(2));
+  EXPECT_THAT(detector.Detect(get_image("digit-3.png")), Optional(3));
+  EXPECT_THAT(detector.Detect(get_image("digit-4.png")), Optional(4));
+  EXPECT_THAT(detector.Detect(get_image("digit-5.png")), Optional(5));
+  EXPECT_THAT(detector.Detect(get_image("digit-6.png")), Optional(6));
+  EXPECT_THAT(detector.Detect(get_image("digit-7.png")), Optional(7));
+  EXPECT_THAT(detector.Detect(get_image("digit-8.png")), Optional(8));
+  EXPECT_THAT(detector.Detect(get_image("digit-9.png")), Optional(9));
+  EXPECT_THAT(detector.Detect(get_image("digit-blank.png")), Optional(0));
 }
 
 }  // namespace

@@ -1,7 +1,7 @@
 #include "sudoku/digit_detector.h"
-#include <filesystem>
 #include <opencv2/opencv.hpp>
 #include "glog/logging.h"
+#include <filesystem>
 
 namespace sudoku {
 
@@ -44,6 +44,7 @@ absl::optional<int32_t> DigitDetector::Detect(const cv::Mat& image) {
     LOG(ERROR) << "Model is not KNearest instance";
     return std::nullopt;
   }
+
   cv::Mat results;
   float response = knn_model->findNearest(processed_image,
                                           knn_model->getDefaultK(), results);
@@ -57,45 +58,46 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
   auto knn_model = cv::ml::KNearest::create();
 
   // Load MNIST data and preprocess
-  cv::Mat training_data;
-  cv::Mat labels;
   std::vector<cv::Mat> images;
   std::vector<int> label_list;
 
+  // Make samples from actual Sudoku image 9.
   auto synthetic_nine = [&]() {
-    constexpr char text[] = "9";
-    constexpr int32_t font_face =  cv::FONT_HERSHEY_SIMPLEX;
-    constexpr double font_scale = 1.0;
-    constexpr int32_t thickness = 2;
-    const auto color = cv::Scalar(255); // white
+    cv::Mat actual_nine = cv::imread("sudoku/testdata/digit-9.png", cv::IMREAD_GRAYSCALE);
+    CHECK(!actual_nine.empty()) << "failed to load real Sudoku sample.";
 
-    for (int i = 0; i < 1000 ; ++i) {
-      cv::Mat digit_image = cv::Mat::zeros(28, 28, CV_8U);  // Start with blank black image
+    // Invert the sample
+    cv::Mat inverted_image;
+    cv::bitwise_not(actual_nine, inverted_image);
 
-      // Calculate text size to center the digit
-      int baseline = 0;
-      cv::Size text_size = cv::getTextSize(text, font_face, font_scale, thickness, &baseline);
-      cv::Point text_org((28 - text_size.width) / 2, (28 + text_size.height) / 2);
+    cv::Mat base_image;
+    cv::resize(inverted_image, base_image, cv::Size(28, 28));
 
-      // Write the digit '9' on the image (white digit)
-      cv::putText(digit_image, text, text_org, font_face, font_scale, color, thickness);
+    for (int i = 0; i < 7000 ; ++i) {
+      cv::Mat nine_sample;
+      base_image.copyTo(nine_sample);
 
-      // Apply slight rotation
-      double angle = -15 + (std::rand() % 30);  // Random angle between -15 and 15
-      cv::Mat rotation_mat = cv::getRotationMatrix2D(cv::Point(14, 14), angle, 1.0);
-      cv::warpAffine(digit_image, digit_image, rotation_mat, digit_image.size());
+      // Apply random rotation
+      double angle = -10 + (std::rand() % 31);  // Random angle between -15° and +15°
+      cv::Mat rotation_matrix = cv::getRotationMatrix2D(cv::Point(14, 14), angle, 1.0);
+      cv::warpAffine(nine_sample, nine_sample, rotation_matrix, nine_sample.size());
 
-      // Flatten and normalize
-      digit_image = digit_image.reshape(1, 1);
-      digit_image.convertTo(digit_image, CV_32F, 1.0 / 255.0);
+      // Apply random Gaussian blur
+      int kernel_size = 1 + 2 * (std::rand() % 3);  // Random kernel size: 1, 3, or 5
+      cv::GaussianBlur(nine_sample, nine_sample, cv::Size(kernel_size, kernel_size), 0);
 
-      // Add to training data
-      images.push_back(digit_image);
+      // Noise
+      cv::Mat noise = cv::Mat::zeros(nine_sample.size(), nine_sample.type());
+      cv::randn(noise, 0, 10);  // Mean 0, standard deviation 10
+      nine_sample += noise;
+
+      images.push_back(nine_sample);
       label_list.push_back(9);
     }
   };
 
-  for (int digit = 0; digit <= 9; ++digit) {
+  // Ignore 0
+  for (int digit = 1; digit <= 9; ++digit) {
     std::string digit_dir =
         std::string(mnist_directory.data()) + "/" + std::to_string(digit);
     for (const auto& entry : std::filesystem::directory_iterator(digit_dir)) {
@@ -104,30 +106,27 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
         LOG(ERROR) << "Failed to load image: " << entry.path();
         return false;
       }
-      images.push_back(img.reshape(1, 1));  // Flatten to a row
+      CHECK(img.size() == cv::Size(28, 28));
+      images.push_back(img);
       label_list.push_back(digit);
     }
   }
 
   // Add blank samples and label them as 0
   for (int i = 0; i < 100; ++i) {
-    cv::Mat blank_image = cv::Mat::ones(28, 28, CV_8U) * 255;  // All white
-    blank_image = blank_image.reshape(1, 1);                   // Flatten
-    blank_image.convertTo(blank_image, CV_32F, 1.0 / 255.0);
+    cv::Mat blank_image = cv::Mat::zeros(28, 28, CV_8U) * 255;  // All black
     images.push_back(blank_image);
     label_list.push_back(0);
   }
 
-  // Add digits with 9
-  synthetic_nine();
-
   // Create training data and labels as matrices
-  training_data = cv::Mat(images.size(), images[0].cols, CV_32F);
-  labels = cv::Mat(label_list).reshape(1, label_list.size());
+  cv::Mat training_data(images.size(), 28 * 28, CV_32F);
+  cv::Mat labels = cv::Mat(label_list).reshape(1, label_list.size());
 
-  for (size_t i = 1; i < images.size(); ++i) {
-    images[i].convertTo(training_data.row(static_cast<int>(i)), CV_32F,
-                        1.0 / 255.0);
+  for (size_t i = 0; i < images.size(); ++i) {
+    cv::Mat flattened_image = images[i].reshape(1, 1);  // Flatten to single row
+    flattened_image.convertTo(training_data.row(static_cast<int>(i)),
+                              CV_32F, 1.0 / 255.0);  // Normalize to [0, 1]
   }
 
   // Train the model
