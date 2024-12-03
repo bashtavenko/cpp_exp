@@ -1,7 +1,7 @@
 #include "sudoku/digit_detector.h"
+#include <filesystem>
 #include <opencv2/opencv.hpp>
 #include "glog/logging.h"
-#include <filesystem>
 
 namespace sudoku {
 
@@ -55,46 +55,45 @@ absl::optional<int32_t> DigitDetector::Detect(const cv::Mat& image) {
 
 bool DigitDetector::Train(absl::string_view mnist_directory,
                           absl::string_view model_path) {
-  auto knn_model = cv::ml::KNearest::create();
 
-  // Load MNIST data and preprocess
+  // Augment and return a clone of the original image.
+  auto augment_image = [&](const cv::Mat& img) {
+    cv::Mat augmented_image = img.clone();
+
+    // Random rotation between -10 and 10 degrees
+    double angle =
+        (rand() % 21 - 10);  // Random angle between -10 and 10 degrees
+    cv::Point2f center(augmented_image.cols / 2, augmented_image.rows / 2);
+    cv::Mat rotation_matrix = cv::getRotationMatrix2D(center, angle, 1.0);
+    cv::warpAffine(augmented_image, augmented_image, rotation_matrix,
+                   augmented_image.size(), cv::INTER_LINEAR,
+                   cv::BORDER_REFLECT);
+
+    // Random translation (up to 2 pixels)
+    int tx =
+        std::rand() % 5 - 2;  // Random translation in x direction (-2 to 2 pixels)
+    int ty =
+        std::rand() % 5 - 2;  // Random translation in y direction (-2 to 2 pixels)
+    cv::Mat translation_matrix = cv::Mat::eye(2, 3, CV_32F);
+    translation_matrix.at<float>(0, 2) = tx;
+    translation_matrix.at<float>(1, 2) = ty;
+    cv::warpAffine(augmented_image, augmented_image, translation_matrix,
+                   augmented_image.size(), cv::INTER_LINEAR,
+                   cv::BORDER_REFLECT);
+
+    // Random blurring (kernel size 3x3 or 5x5)
+    int blur_kernel_size =
+        (std::rand() % 2 == 0) ? 3 : 5;  // Randomly select 3x3 or 5x5 kernel size
+    cv::GaussianBlur(augmented_image, augmented_image,
+                     cv::Size(blur_kernel_size, blur_kernel_size), 0);
+
+    return augmented_image;
+  };
+
+  auto knn_model = cv::ml::KNearest::create();
+  knn_model->setAlgorithmType(cv::ml::KNearest::Types::BRUTE_FORCE);
   std::vector<cv::Mat> images;
   std::vector<int> label_list;
-
-  // Make samples from actual Sudoku image 9.
-  auto synthetic_nine = [&]() {
-    cv::Mat actual_nine = cv::imread("sudoku/testdata/digit-9.png", cv::IMREAD_GRAYSCALE);
-    CHECK(!actual_nine.empty()) << "failed to load real Sudoku sample.";
-
-    // Invert the sample
-    cv::Mat inverted_image;
-    cv::bitwise_not(actual_nine, inverted_image);
-
-    cv::Mat base_image;
-    cv::resize(inverted_image, base_image, cv::Size(28, 28));
-
-    for (int i = 0; i < 7000 ; ++i) {
-      cv::Mat nine_sample;
-      base_image.copyTo(nine_sample);
-
-      // Apply random rotation
-      double angle = -10 + (std::rand() % 31);  // Random angle between -15° and +15°
-      cv::Mat rotation_matrix = cv::getRotationMatrix2D(cv::Point(14, 14), angle, 1.0);
-      cv::warpAffine(nine_sample, nine_sample, rotation_matrix, nine_sample.size());
-
-      // Apply random Gaussian blur
-      int kernel_size = 1 + 2 * (std::rand() % 3);  // Random kernel size: 1, 3, or 5
-      cv::GaussianBlur(nine_sample, nine_sample, cv::Size(kernel_size, kernel_size), 0);
-
-      // Noise
-      cv::Mat noise = cv::Mat::zeros(nine_sample.size(), nine_sample.type());
-      cv::randn(noise, 0, 10);  // Mean 0, standard deviation 10
-      nine_sample += noise;
-
-      images.push_back(nine_sample);
-      label_list.push_back(9);
-    }
-  };
 
   // Ignore 0
   for (int digit = 1; digit <= 9; ++digit) {
@@ -109,6 +108,13 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
       CHECK(img.size() == cv::Size(28, 28));
       images.push_back(img);
       label_list.push_back(digit);
+
+      // Augment the image with slight transformations
+      for (int i = 0; i < 3; ++i) {
+        cv::Mat augmented_img = augment_image(img);
+        images.push_back(augmented_img);
+        label_list.push_back(digit);
+      }
     }
   }
 
@@ -125,8 +131,8 @@ bool DigitDetector::Train(absl::string_view mnist_directory,
 
   for (size_t i = 0; i < images.size(); ++i) {
     cv::Mat flattened_image = images[i].reshape(1, 1);  // Flatten to single row
-    flattened_image.convertTo(training_data.row(static_cast<int>(i)),
-                              CV_32F, 1.0 / 255.0);  // Normalize to [0, 1]
+    flattened_image.convertTo(training_data.row(static_cast<int>(i)), CV_32F,
+                              1.0 / 255.0);  // Normalize to [0, 1]
   }
 
   // Train the model
