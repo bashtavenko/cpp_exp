@@ -1,4 +1,14 @@
+load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+buildifier(
+    name = "buildifier",
+    exclude_patterns = [
+        "./bazel-*/*",
+        "./.git/*",
+    ],
+    lint_mode = "fix",
+)
 
 cc_library(
     name = "hello",
@@ -6,7 +16,7 @@ cc_library(
     hdrs = ["hello.h"],
     deps = [
         "@absl//absl/strings",
-        "@glog//:glog"
+        "@glog",
     ],
 )
 
@@ -15,7 +25,7 @@ cc_test(
     srcs = ["hello_test.cc"],
     deps = [
         ":hello",
-        "@googletest//:gtest_main"
+        "@googletest//:gtest_main",
     ],
 )
 
@@ -24,6 +34,6 @@ cc_binary(
     srcs = ["hello_main.cc"],
     deps = [
         ":hello",
-       "@gflags//:gflags"
+        "@gflags",
     ],
 )
