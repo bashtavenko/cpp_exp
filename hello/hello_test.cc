@@ -1,6 +1,7 @@
 #include "hello.h"
 #include <string>
 #include "gtest/gtest.h"
+#include "protobuf-matchers/protocol-buffer-matchers.h"
 
 namespace hello {
 namespace {
