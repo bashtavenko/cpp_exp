@@ -18,8 +18,9 @@ cmake(
     name = "opencv",
     cache_entries = {
         "BUILD_LIST": "calib3d,core,features2d,highgui,imgcodecs,imgproc,video,videoio,ml",
-        "WITH_FFMPEG": "OFF",
-        "WITH_GTK": "ON",  # Add this line to enable GTK support
+        "WITH_FFMPEG": "ON",
+        "WITH_GTK": "OFF",
+        "WITH_QT": "ON",
     },
     lib_source = "@opencv//:all",
     out_include_dir = "include/opencv4",

@@ -15,13 +15,16 @@
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+  FLAGS_alsologtostderr = true;
 
-  absl::Status status = hello::misc::ShowPicture();
+  // absl::Status status = hello::misc::ShowPicture();
+  // absl::Status status = hello::misc::ShowVideo();
+  // absl::Status status = hello::misc::ShowPictureCanny();
 
-  //  absl::Status status = hello::misc::ShowVideoCanny();
-  //  absl::Status status = hello::convolution::AdaptiveThreshold();
+  absl::Status status = hello::misc::ShowVideoCanny();
+  // absl::Status status = hello::convolution::AdaptiveThreshold();
   //  absl::Status status = hello::transformations::PerspectiveTransform();
-  //  absl::Status status = hello::fft::FastConv();
+  // absl::Status status = hello::fft::FastConv();
   //  absl::Status status = hello::histograms::Match();
   //  absl::Status
   //      status =
@@ -35,8 +38,8 @@ int main(int argc, char** argv) {
   //  absl::Status status = hello::ml::RunDecisionTrees();
   //  absl::Status status = hello::tracking::Farneback("test.avi");
   //  absl::Status status = hello::tracking::Kalman("video.mp4");
-  //  absl::Status status = hello::tracking::Kalman("test.avi");
-  //  absl::Status status = hello::kalman::Track("test.avi");
+   // absl::Status status = hello::tracking::Kalman("test.avi");
+  // absl::Status status = hello::kalman::Track("test.avi");
   LOG(INFO) << status.message();
   return status.ok() ? EXIT_SUCCESS : EXIT_FAILURE;
 }

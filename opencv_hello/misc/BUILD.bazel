@@ -9,6 +9,7 @@ cc_library(
         "//:opencv",
         "@absl//absl/status",
         "@absl//absl/strings",
+        "@absl//absl/strings:str_format",
         "@glog",
     ],
 )

@@ -1,6 +1,7 @@
 #include "misc.h"
 #include <glog/logging.h>
 #include <filesystem>
+#include "absl/strings/str_cat.h"
 #include "absl/strings/str_format.h"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -22,11 +23,16 @@ absl::Status ShowPicture() {
 
 absl::Status ShowVideo() {
   cv::namedWindow("Example 2-3", cv::WINDOW_AUTOSIZE);
-  cv::VideoCapture cap;
-  cap.open(path(kTestDataPath) / "Megamind.avi");
+  cv::VideoCapture capture;
+  const std::string file_path = path(kTestDataPath) / "Megamind.avi";
+  capture.open(file_path);
+  if (!capture.isOpened()) {
+    return absl::InternalError(
+        absl::StrCat("Failed to open camera - ", file_path));
+  }
   cv::Mat frame;
   for (;;) {
-    cap >> frame;
+    capture >> frame;
     if (frame.empty()) break;
     cv::imshow("Example 2-3", frame);
     if ((char)cv::waitKey(/*delay=*/33) >= 0) break;
@@ -132,50 +138,54 @@ absl::Status ShowPictureCanny() {
   return absl::OkStatus();
 }
 absl::Status ShowVideoCanny() {
-  cv::VideoCapture cap;
-  cap.open(path(kTestDataPath) / "Megamind.avi");
-  double rate = cap.get(cv::CAP_PROP_FPS);
-  cv::Mat MatFrame;
-  cv::Mat MatGray;
-  cv::Mat MatCanny;
+  cv::VideoCapture capture;
+  const std::string file_path = path(kTestDataPath) / "Megamind.avi";
+  capture.open(file_path);
+  if (!capture.isOpened()) {
+    return absl::InternalError(
+        absl::StrCat("Failed to open camera - ", file_path));
+  }
+  double rate = capture.get(cv::CAP_PROP_FPS);
+  cv::Mat frame;
+  cv::Mat gray;
+  cv::Mat canny;
   int delay = 1000 / rate;
   LOG(INFO) << "rate = " << rate << ", delay = " << delay;
   while (1) {
-    cap >> MatFrame;
-    if (!MatFrame.data) break;
+    capture >> frame;
+    if (!frame.data) break;
     //(1)
-    imshow("Raw Video", MatFrame);
+    imshow("Raw Video", frame);
     //(2)
-    cv::cvtColor(MatFrame, MatGray, cv::COLOR_BGR2GRAY);
-    imshow("Gray Video", MatGray);
+    cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
+    imshow("Gray Video", gray);
     //(3)
-    Canny(MatGray, MatCanny, 100, 255);
-    imshow("Canny Video", MatCanny);
+    Canny(gray, canny, 100, 255);
+    imshow("Canny Video", canny);
     // question a
-    cv::Mat MatAll(MatFrame.rows, 3 * MatFrame.cols, CV_8UC3,
-                   cv::Scalar::all(0));
-    cv::cvtColor(MatGray, MatGray, cv::COLOR_GRAY2BGR);
-    cv::cvtColor(MatCanny, MatCanny, cv::COLOR_GRAY2BGR);
-    cv::Mat MatSub = MatAll.colRange(0, MatFrame.cols);
-    MatFrame.copyTo(MatSub);
-    MatSub = MatAll.colRange(MatFrame.cols, 2 * MatFrame.cols);
-    MatGray.copyTo(MatSub);
-    MatSub = MatAll.colRange(2 * MatFrame.cols, 3 * MatFrame.cols);
-    MatCanny.copyTo(MatSub);
+    cv::Mat all(frame.rows, 3 * frame.cols, CV_8UC3, cv::Scalar::all(0));
+    cv::cvtColor(gray, gray, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(canny, canny, cv::COLOR_GRAY2BGR);
+    cv::Mat sub = all.colRange(0, frame.cols);
+    frame.copyTo(sub);
+    sub = all.colRange(frame.cols, 2 * frame.cols);
+    gray.copyTo(sub);
+    sub = all.colRange(2 * frame.cols, 3 * frame.cols);
+    canny.copyTo(sub);
     // question b
     cv::Scalar color = CV_RGB(255, 0, 0);
-    cv::putText(MatAll, "raw video", cv::Point(50, 30), cv::FONT_HERSHEY_DUPLEX,
+    cv::putText(all, "raw video", cv::Point(50, 30), cv::FONT_HERSHEY_DUPLEX,
                 1.0f, color);
-    putText(MatAll, "gray video", cv::Point(50 + MatFrame.cols, 30),
+    putText(all, "gray video", cv::Point(50 + frame.cols, 30),
             cv::FONT_HERSHEY_DUPLEX, 1.0f, color);
-    putText(MatAll, "canny video", cv::Point(50 + 2 * MatFrame.cols, 30),
+    putText(all, "canny video", cv::Point(50 + 2 * frame.cols, 30),
             cv::FONT_HERSHEY_DUPLEX, 1.0f, color);
-    imshow("all Video", MatAll);
+    imshow("all Video", all);
 
     if ((cv::waitKey(delay) & 255) == 27) break;
   }
   cv::waitKey();
-  cap.release();
+  capture.release();
   return absl::OkStatus();
 }
 }  // namespace hello::misc
