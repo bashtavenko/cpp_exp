@@ -1,6 +1,8 @@
+#include <numeric>
 #include "absl/flags/flag.h"
 #include "absl/flags/parse.h"
 #include "absl/status/status.h"
+#include "absl/strings/str_format.h"
 #include "gflags/gflags.h"
 #include "glog/logging.h"
 #include "opencv2/opencv.hpp"
@@ -12,6 +14,124 @@ ABSL_FLAG(std::string, previous_image, "testdata/optical_flow/frame_0.jpg",
           "Previous video frame");
 ABSL_FLAG(std::string, next_image, "testdata/optical_flow/frame_27.jpg",
           "Current video frame");
+
+void DrawMotionSummary(cv::Mat& image, const std::vector<cv::Point2f>& prev_pts,
+                       const std::vector<cv::Point2f>& next_pts,
+                       const std::vector<uchar>& status) {
+  if (prev_pts.empty() || next_pts.empty()) {
+    return;
+  }
+
+  std::vector<float> dx_values;
+  std::vector<float> dy_values;
+  std::vector<float> magnitudes;
+
+  // Collect motion vectors for successfully tracked points
+  for (size_t i = 0;
+       i < prev_pts.size() && i < next_pts.size() && i < status.size(); ++i) {
+    if (status[i]) {  // Only use successfully tracked points
+      float dx = next_pts[i].x - prev_pts[i].x;
+      float dy = next_pts[i].y - prev_pts[i].y;
+      float magnitude = sqrt(dx * dx + dy * dy);
+
+      dx_values.push_back(dx);
+      dy_values.push_back(dy);
+      magnitudes.push_back(magnitude);
+    }
+  }
+
+  if (dx_values.empty()) {
+    return;
+  }
+
+  // Calculate mean motion
+  float mean_dx = std::accumulate(dx_values.begin(), dx_values.end(), 0.0f) /
+                  dx_values.size();
+  float mean_dy = std::accumulate(dy_values.begin(), dy_values.end(), 0.0f) /
+                  dy_values.size();
+  float mean_magnitude = sqrt(mean_dx * mean_dx + mean_dy * mean_dy);
+  float mean_direction =
+      std::atan2(mean_dy, mean_dx) * 180.0f / CV_PI;  // Convert to degrees
+
+  // Calculate standard deviation for motion consistency
+  float sum_sq_dx = 0;
+  float sum_sq_dy = 0;
+  for (size_t i = 0; i < dx_values.size(); ++i) {
+    sum_sq_dx += (dx_values[i] - mean_dx) * (dx_values[i] - mean_dx);
+    sum_sq_dy += (dy_values[i] - mean_dy) * (dy_values[i] - mean_dy);
+  }
+  float std_dx = sqrt(sum_sq_dx / dx_values.size());
+  float std_dy = sqrt(sum_sq_dy / dy_values.size());
+
+  // Determine motion type
+  std::string motion_type;
+  if (mean_magnitude < 1.0f) {
+    // Very low motion magnitude (< 1.0 pixels)
+    motion_type = "Minimal/Static";
+  } else if (std_dx < 2.0f && std_dy < 2.0f) {
+    // Low standard deviation in flow components, indicating uniform motion
+    // (translation, rotation, or scaling)
+    motion_type = "Rigid Body";
+  } else {
+    // High variation in flow field, suggesting non-rigid or complex motion
+    motion_type = "Deformation";
+  }
+
+  // Create semi-transparent overlay in top-left corner
+  int text_height = 25;
+  int text_margin = 10;
+  int overlay_width = 320;
+  int overlay_height = 8 * text_height + text_margin;
+
+  // Ensure overlay fits within image
+  overlay_width = std::min(overlay_width, image.cols - 20);
+  overlay_height = std::min(overlay_height, image.rows - 20);
+
+  cv::Rect overlay_rect(10, 10, overlay_width, overlay_height);
+  cv::Mat roi = image(overlay_rect);
+  roi = roi * 0.3;  // Darken to 30% of original brightness
+
+  // Text properties
+  int font_face = cv::FONT_HERSHEY_SIMPLEX;
+  cv::Scalar text_color(255);  // White text for grayscale image
+  int line_spacing = text_height;
+
+  // Draw text lines
+  int y_pos = 30;
+  std::vector<std::string> text_lines;
+
+  text_lines.push_back("=== MOTION SUMMARY ===");
+  text_lines.push_back(
+      absl::StrFormat("Tracked: %i / %i", dx_values.size(), prev_pts.size()));
+
+  std::stringstream ss;
+  ss << std::fixed << std::setprecision(1);
+  text_lines.push_back(
+      absl::StrFormat("Mean: (%.1f, %.1f) px", mean_dx, mean_dy));
+
+  ss.str("");
+  ss.clear();
+  text_lines.push_back(absl::StrFormat("Magnitude: %.1f", mean_magnitude));
+
+  ss.str("");
+  ss.clear();
+  text_lines.push_back(absl::StrFormat("Direction: %.1f deg", mean_direction));
+
+  ss.str("");
+  ss.clear();
+  text_lines.push_back(
+      absl::StrFormat("Std dev: (%.1f, %.1f)", std_dx, std_dy));
+
+  text_lines.push_back("Type: " + motion_type);
+
+  for (const auto& line : text_lines) {
+    constexpr int thickness = 1;
+    constexpr double font_scale = 0.5;
+    cv::putText(image, line, cv::Point(20, y_pos), font_face, font_scale,
+                text_color, thickness);
+    y_pos += line_spacing;
+  }
+}
 
 absl::Status Run() {
   LOG(INFO) << "Running Lucas-Kanade test";
@@ -64,6 +184,9 @@ absl::Status Run() {
                        20,  // Maximum number of iterations
                        0.3  // Minimum change per iteration
                        ));
+
+  // Draw motion summary
+  DrawMotionSummary(img_c, corners_a, corners_b, features_found);
 
   // Now make some image of what we are looking at:
   // Note that if you want to track cornersB further, i.e.
