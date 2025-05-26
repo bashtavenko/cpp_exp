@@ -12,3 +12,18 @@ cc_binary(
         "@glog",
     ],
 )
+
+cc_binary(
+    name = "farneback_main",
+    srcs = ["farneback_main.cc"],
+    data = ["//testdata"],
+    deps = [
+        "//:opencv",
+        "@absl//absl/flags:flag",
+        "@absl//absl/flags:parse",
+        "@absl//absl/status",
+        "@absl//absl/strings",
+        "@gflags",
+        "@glog",
+    ],
+)
