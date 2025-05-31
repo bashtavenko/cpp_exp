@@ -1,6 +1,7 @@
 # Default for Linux
 build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
-build --cxxopt=-Wno-missing-requires
+# Cannot use Who-missing-requires because Windows doesnot overide MVSVC toolchain
+#build --cxxopt=-Wno-missing-requires
 
 
 common --enable_bzlmod
