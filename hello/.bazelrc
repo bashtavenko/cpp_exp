@@ -1,4 +1,13 @@
+# Default for Linux
 build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
-common --enable_bzlmod
-# Proto warning
 build --cxxopt=-Wno-missing-requires
+
+
+common --enable_bzlmod
+
+# Windows-specific config (activated via --config=windows)
+build:windows --compiler=clang-cl
+build:windows --cxopt=/std:c++17
+build:windows --host_cxopt=/std:c++17
+build:windows --define=protobuf_allow_mvcs=true
+build:windows --action_env=BAZEL_LLVM="C:/Program Files/LLVM"
