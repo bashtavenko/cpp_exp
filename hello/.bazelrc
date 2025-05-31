@@ -1,4 +1,4 @@
-build --cxxopt='-std=c++20' --host_cxxopt='-std=c++20'
+build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
 common --enable_bzlmod
 # Proto warning
 build --cxxopt=-Wno-missing-requires

@@ -26,7 +26,6 @@ cc_test(
     deps = [
         ":hello",
         "@googletest//:gtest_main",
-        "@protobuf-matchers//protobuf-matchers",
     ],
 )
 
