@@ -5,3 +5,28 @@ bazel_dep(name = "googletest", version = "1.15.2")
 bazel_dep(name = "abseil-cpp", version = "20240722.0", repo_name = "absl")
 bazel_dep(name = "gflags", version = "2.2.2")
 bazel_dep(name = "glog", version = "0.7.1")
+
+# Register C++ toolchains
+bazel_dep(name = "platforms", version = "0.0.10")
+bazel_dep(name = "toolchains_llvm", version = "1.0.0")
+
+# Configure LLVM for both platforms
+llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
+
+# Linux toolchain (default)
+# Can be set to specific version
+# llvm_version = "17.0.6",
+llvm.toolchain(
+    name = "llvm_toolchain_linux",
+)
+
+# Windows toolchain (optional)
+llvm.toolchain(
+    name = "llvm_toolchain_windows",
+)
+use_repo(llvm, "llvm_toolchain_linux", "llvm_toolchain_windows")
+
+register_toolchains(
+    "@llvm_toolchain_linux//:all",
+    "@llvm_toolchain_windows//:all",
+)

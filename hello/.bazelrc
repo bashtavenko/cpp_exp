@@ -1,14 +1,23 @@
+common --enable_bzlmod
+
 # Default for Linux
-build --cxxopt='-std=c++17' --host_cxxopt='-std=c++17'
+build --copt=-std=c++17
+build --host_copt=-std=c++17
+
 # Cannot use Who-missing-requires because Windows doesnot overide MVSVC toolchain
 #build --cxxopt=-Wno-missing-requires
 
-
-common --enable_bzlmod
-
-# Windows-specific config (activated via --config=windows)
+# Windows-specific configuration (opt-in)
+# bazel build --config=windows //...
+build:windows --enable_platform_specific_config
 build:windows --compiler=clang-cl
-build:windows --cxxopt /std:c++17
-build:windows --host_cxxopt /std:c++17
+build:windows --cpu=x64_windows
+build:windows --copt=/std:c++17
+build:windows --host_copt=/std:c++17
+build:windows --shell_executable=C:/msys64/usr/bin/bash.exe
+#build:windows --linkopt=/SUBSYSTEM:CONSOLE
 build:windows --define protobuf_allow_mvcs=true
 build:windows --action_env=BAZEL_LLVM="C:/Program Files/LLVM"
+
+# Auto-detect platform and apply config
+build:auto --enable_platform_specific_config
