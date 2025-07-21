@@ -1,14 +1,13 @@
 common --enable_bzlmod
 
-# Default for Linux
-build --copt=-std=c++17
-build --host_copt=-std=c++17
+# Linux/Mac default (GCC or Clang)
+build:linux --copt=-std=c++17
+build:linux --host_copt=-std=c++17
 
 # Cannot use Who-missing-requires because Windows doesnot overide MVSVC toolchain
 #build --cxxopt=-Wno-missing-requires
 
-# Windows-specific configuration (opt-in)
-# bazel build --config=windows //...
+# Windows-specific
 build:windows --enable_platform_specific_config
 build:windows --compiler=clang-cl
 build:windows --cpu=x64_windows

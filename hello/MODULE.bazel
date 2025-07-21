@@ -1,5 +1,8 @@
 bazel_dep(name = "buildifier_prebuilt", version = "6.4.0", dev_dependency = True)
 
+# TODO: "C++ versions less than C++17 are not supported."
+# bazel_dep(name = "googletest", version = "1.17.0")
+#bazel_dep(name = "abseil-cpp", version = "20240722.0", repo_name
 bazel_dep(name = "rules_cc", version = "0.0.16")
 bazel_dep(name = "googletest", version = "1.15.2")
 bazel_dep(name = "abseil-cpp", version = "20240722.0", repo_name = "absl")

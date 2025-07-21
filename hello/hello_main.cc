@@ -6,10 +6,11 @@
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+  // Requires --logtostderr=1 flag or next line
+  gflags::SetCommandLineOption("logtostderr", "1");
 
   CHECK_NE(1, 2) << ": The world must be ending!";
 
-  // Requires --logtostderr=1 flag
   LOG(INFO) << hello::Greet(argc < 2 ? "world" : argv[1]) << std::endl;
 
   std::vector<int> x;
