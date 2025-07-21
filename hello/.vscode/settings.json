@@ -1,9 +1,0 @@
-{
-  "files.associations": {
-    "*.gss": "css",
-    "BUILD": "bazel",
-    "METADATA": "bazel",
-    "WORKSPACE": "bazel",
-    "string": "cpp"
-  }
-}

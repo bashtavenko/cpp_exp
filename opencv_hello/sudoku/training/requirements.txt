@@ -1,5 +1,0 @@
-kaggle
-scipy
-pillow
-absl-py
-numpy
