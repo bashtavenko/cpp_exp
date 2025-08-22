@@ -1,8 +1,8 @@
 common --enable_bzlmod
 
 # Linux/Mac default (GCC or Clang)
-build:linux --copt=-std=c++17
-build:linux --host_copt=-std=c++17
+build:linux --copt=-std=c++20
+build:linux --host_copt=-std=c++20
 
 # Cannot use Who-missing-requires because Windows doesnot overide MVSVC toolchain
 #build --cxxopt=-Wno-missing-requires
@@ -11,10 +11,9 @@ build:linux --host_copt=-std=c++17
 build:windows --enable_platform_specific_config
 build:windows --compiler=clang-cl
 build:windows --cpu=x64_windows
-build:windows --copt=/std:c++17
-build:windows --host_copt=/std:c++17
-build:windows --shell_executable=C:/msys64/usr/bin/bash.exe
-#build:windows --linkopt=/SUBSYSTEM:CONSOLE
+build:windows --copt=/std:c++20
+build:windows --host_copt=/std:c++20
+build:windows --shell_executable=C:/tools/msys64/usr/bin/bash.exe
 build:windows --define protobuf_allow_mvcs=true
 build:windows --action_env=BAZEL_LLVM="C:/Program Files/LLVM"
 
