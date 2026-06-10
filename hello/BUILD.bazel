@@ -16,7 +16,6 @@ cc_library(
     hdrs = ["hello.h"],
     deps = [
         "@absl//absl/strings",
-        "@glog",
     ],
 )
 
@@ -34,6 +33,8 @@ cc_binary(
     srcs = ["hello_main.cc"],
     deps = [
         ":hello",
-        "@gflags",
+        "@absl//absl/flags:parse",
+        "@absl//absl/log",
+        "@absl//absl/log:check",
     ],
 )
